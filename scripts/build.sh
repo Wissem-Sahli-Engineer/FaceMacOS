@@ -23,9 +23,15 @@ fi
 swift build -c "$CONFIG" "${ARCH_FLAGS[@]}"
 BIN="$(swift build -c "$CONFIG" "${ARCH_FLAGS[@]}" --show-bin-path)/FaceMacOS"
 
-rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+# Assemble and sign outside the project: iCloud-synced folders (Desktop/Documents) add Finder metadata
+# that codesign rejects.
+WORK="$(mktemp -d)"
+trap 'rm -rf "$WORK"' EXIT
+FINAL_APP="$APP"
+APP="$WORK/FaceMacOS.app"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Library/LaunchAgents"
 cp "$BIN" "$APP/Contents/MacOS/FaceMacOS"
+cp Resources/LaunchAgents/*.plist "$APP/Contents/Library/LaunchAgents/"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
@@ -46,6 +52,11 @@ else
   echo "warning: ad-hoc signing; permissions reset on every rebuild. Run scripts/setup_signing.sh once." >&2
   codesign --force --sign - --entitlements Resources/FaceMacOS.entitlements "$APP"
 fi
+codesign --verify --strict "$APP"
+rm -rf "$FINAL_APP"
+mkdir -p "$(dirname "$FINAL_APP")"
+ditto "$APP" "$FINAL_APP"
+APP="$FINAL_APP"
 echo "Built $APP"
 
 if [[ "$RUN" == 1 ]]; then

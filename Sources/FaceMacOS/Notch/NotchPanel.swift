@@ -48,6 +48,7 @@ final class NotchController {
         self.authenticator = authenticator
         layout()
         panel.orderFrontRegardless()
+        LockScreenSpace.move(panel)
         screenObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main
         ) { [weak self] _ in
@@ -60,6 +61,6 @@ final class NotchController {
         let frame = geometry.screen.frame
         let size = Self.canvasSize
         panel.setFrame(NSRect(x: frame.midX - size.width / 2, y: frame.maxY - size.height, width: size.width, height: size.height), display: true)
-        panel.contentView = NSHostingView(rootView: NotchView(auth: authenticator, closedSize: geometry.closedSize))
+        panel.contentView = NSHostingView(rootView: NotchView(auth: authenticator, settings: AppSettings.shared, closedSize: geometry.closedSize))
     }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LiveCameraView: View {
     @ObservedObject var auth: FaceAuthenticator
+    @ObservedObject var settings: AppSettings
 
     var body: some View {
         HStack(alignment: .top, spacing: 20) {
@@ -31,7 +32,7 @@ struct LiveCameraView: View {
                         GeometryReader { geometry in
                             if let rect = auth.liveStats.faceRect {
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.green, lineWidth: 2)
+                                    .stroke(settings.accentColor, lineWidth: 2)
                                     .frame(width: rect.width * geometry.size.width, height: rect.height * geometry.size.height)
                                     .position(x: rect.midX * geometry.size.width, y: (1 - rect.midY) * geometry.size.height)
                             }
@@ -58,18 +59,18 @@ struct LiveCameraView: View {
             VStack(alignment: .leading, spacing: 4) {
                 StatRow(label: "Image quality", value: String(format: "%.2f", stats.quality))
                 ProgressView(value: Double(min(max(stats.quality, 0), 1)))
-                    .tint(stats.quality >= FaceAnalyzer.minimumQuality ? .green : .orange)
+                    .tint(stats.quality >= FaceAnalyzer.minimumQuality ? settings.accentColor : .orange)
             }
             if let score = stats.score {
                 let passing = auth.threshold.map { score >= $0 } ?? false
-                StatRow(label: "Match", value: String(format: "%.3f / %.3f", score, auth.threshold ?? 0), color: passing ? .green : .red)
+                StatRow(label: "Match", value: String(format: "%.3f / %.3f", score, auth.threshold ?? 0), color: passing ? settings.accentColor : .red)
             } else {
                 StatRow(label: "Match", value: auth.isEnrolled ? "—" : "Not enrolled")
             }
             StatRow(label: "Eye openness", value: String(format: "%.3f", stats.eyeOpenness))
             StatRow(label: "Blinks", value: "\(stats.blinks)")
             StatRow(label: "Head turn", value: String(format: "x %.2f  y %.2f", stats.turnX, stats.turnY))
-            StatRow(label: "Liveness", value: stats.liveness, color: stats.liveness.hasSuffix("✓") ? .green : .primary)
+            StatRow(label: "Liveness", value: stats.liveness, color: stats.liveness.hasSuffix("✓") ? settings.accentColor : .primary)
             StatRow(label: "Last gesture", value: stats.lastGesture?.title ?? "—")
             Spacer()
             Text("Use this view to check lighting and distance. Blink and turn your head to see blinks and gestures register.")

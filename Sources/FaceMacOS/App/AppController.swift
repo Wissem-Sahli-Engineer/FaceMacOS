@@ -16,6 +16,9 @@ final class AppController: ObservableObject {
 
     func start() {
         settings.applyDockPolicy()
+        settings.configureLaunchAtLogin()
+        // Ask for Keychain access now, while the user can answer, not later behind the lock screen.
+        if settings.unlockLockScreen, LoginPassword.isStored { _ = LoginPassword.load() }
         notch = NotchController(authenticator: authenticator)
         _ = unlocker
         hotKeys = [
@@ -64,7 +67,7 @@ final class AppController: ObservableObject {
     }
 
     func deleteAllData() {
-        NSApp.activate()
+        NSApp.bringToFront()
         let alert = NSAlert()
         alert.messageText = "Delete all FaceMacOS data?"
         alert.informativeText = "Your face data, vault note and saved login password will be removed. You'll need to set up Face ID again."

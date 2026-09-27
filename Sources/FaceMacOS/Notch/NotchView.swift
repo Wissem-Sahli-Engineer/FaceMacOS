@@ -1,10 +1,13 @@
+import Combine
 import SwiftUI
 
 struct NotchView: View {
     @ObservedObject var auth: FaceAuthenticator
+    @ObservedObject var settings: AppSettings
     let closedSize: CGSize
 
     @State private var shown: AuthPhase = .idle
+    @State private var previousPhase: AuthPhase = .idle
     @State private var isOpen = false
     @State private var contentVisible = false
     @State private var isVisible = false
@@ -30,8 +33,11 @@ struct NotchView: View {
             .shadow(color: .black.opacity(isOpen ? 0.4 : 0), radius: 20, y: 10)
             .opacity(isVisible ? 1 : 0)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .onChange(of: auth.phase) { oldPhase, newPhase in
-                transition(from: oldPhase, to: newPhase)
+            .onReceive(auth.$phase.removeDuplicates()) { newPhase in
+                // SwiftUI may resubscribe on view updates, which replays the current phase.
+                guard newPhase != previousPhase else { return }
+                transition(from: previousPhase, to: newPhase)
+                previousPhase = newPhase
             }
     }
 
@@ -66,17 +72,17 @@ struct NotchView: View {
             Color.clear
         case .scanning(let hint):
             VStack(spacing: 14) {
-                ScanningGlyph().frame(width: 84, height: 84)
+                ScanningGlyph(accent: settings.accentColor).frame(width: 84, height: 84)
                 label(hint.isEmpty ? "Face ID" : hint)
             }
         case .enrolling(let filled, let hint):
             VStack(spacing: 12) {
-                EnrollmentRing(filled: filled, preview: auth.preview).frame(width: 220, height: 220)
+                EnrollmentRing(filled: filled, preview: auth.preview, accent: settings.accentColor).frame(width: 220, height: 220)
                 label(hint)
             }
         case .success(let message):
             VStack(spacing: 14) {
-                SuccessGlyph().frame(width: 84, height: 84)
+                SuccessGlyph(color: settings.accentColor).frame(width: 84, height: 84)
                 label(message)
             }
         case .failure(let message):

@@ -18,16 +18,27 @@ enum Keychain {
         ]
     }
 
-    static func read(_ account: String) -> Data? {
+    /// `allowPrompt: false` fails instead of showing a Keychain access dialog (e.g. behind the lock screen,
+    /// where nobody could answer it and the read would hang).
+    static func read(_ account: String, allowPrompt: Bool = true) -> Data? {
         var query = baseQuery(account)
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
+        if !allowPrompt { query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail }
         var result: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
         if status != errSecSuccess && status != errSecItemNotFound {
             Log.app.error("Keychain read \(account, privacy: .public) failed: \(message(for: status), privacy: .public)")
         }
         return status == errSecSuccess ? result as? Data : nil
+    }
+
+    /// Checks for an item without reading its secret, so it never triggers a Keychain access prompt.
+    static func exists(_ account: String) -> Bool {
+        var query = baseQuery(account)
+        query[kSecReturnAttributes as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        return SecItemCopyMatching(query as CFDictionary, nil) == errSecSuccess
     }
 
     @discardableResult

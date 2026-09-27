@@ -38,6 +38,8 @@ struct CheckmarkShape: Shape {
 }
 
 struct ScanningGlyph: View {
+    let accent: Color
+
     var body: some View {
         TimelineView(.animation) { timeline in
             let t = timeline.date.timeIntervalSinceReferenceDate
@@ -45,7 +47,7 @@ struct ScanningGlyph: View {
                 Circle().stroke(Color.white.opacity(0.12), lineWidth: 3)
                 Circle()
                     .trim(from: 0, to: 0.2)
-                    .stroke(Color.white.opacity(0.9), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .stroke(accent, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                     .rotationEffect(.radians(t * 2 * .pi * 0.9))
                 FaceIDGlyph()
                     .stroke(Color.white, style: .glyph)
@@ -57,12 +59,13 @@ struct ScanningGlyph: View {
 }
 
 struct SuccessGlyph: View {
+    let color: Color
     @State private var progress: CGFloat = 0
 
     var body: some View {
         CheckmarkShape()
             .trim(from: 0, to: progress)
-            .stroke(Color.white, style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
+            .stroke(color, style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
             .padding(12)
             .onAppear {
                 withAnimation(.easeOut(duration: 0.35).delay(0.05)) { progress = 1 }
@@ -74,6 +77,7 @@ struct SuccessGlyph: View {
 struct EnrollmentRing: View {
     let filled: Set<Int>
     let preview: CGImage?
+    let accent: Color
     private static let tickCount = 72
 
     var body: some View {
@@ -96,7 +100,7 @@ struct EnrollmentRing: View {
                 ForEach(0..<Self.tickCount, id: \.self) { index in
                     let degrees = Double(index) * 360 / Double(Self.tickCount)
                     Capsule()
-                        .fill(filled.contains(PoseSectors.sector(forDegrees: 90 - degrees)) ? Color.green : Color.white.opacity(0.25))
+                        .fill(filled.contains(PoseSectors.sector(forDegrees: 90 - degrees)) ? accent : Color.white.opacity(0.25))
                         .frame(width: 3, height: d * 0.075)
                         .offset(y: -(d / 2 - d * 0.05))
                         .rotationEffect(.degrees(degrees))

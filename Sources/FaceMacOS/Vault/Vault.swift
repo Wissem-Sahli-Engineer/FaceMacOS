@@ -22,13 +22,14 @@ final class VaultModel: ObservableObject {
 
 struct VaultView: View {
     @ObservedObject var model: VaultModel
+    @ObservedObject var settings = AppSettings.shared
     let onLock: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Unlocked with Face ID", systemImage: "lock.open.fill")
                 .font(.headline)
-                .foregroundStyle(.green)
+                .foregroundStyle(settings.accentColor)
             TextEditor(text: $model.text)
                 .font(.body.monospaced())
                 .scrollContentBackground(.hidden)
@@ -75,7 +76,7 @@ final class VaultWindowController: NSObject, NSWindowDelegate {
             window.center()
             self.window = window
         }
-        NSApp.activate()
+        NSApp.bringToFront()
         window?.makeKeyAndOrderFront(nil)
     }
 

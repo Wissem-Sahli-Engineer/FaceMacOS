@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FaceMacOS — Unlock your Mac with your face</title>
+  <meta name="description" content="Face ID for any Mac with a camera. Open the lid, look, blink — you're in. Free and fully on-device.">
+  <meta property="og:title" content="FaceMacOS — Unlock your Mac with your face">
+  <meta property="og:description" content="Face ID for any Mac with a camera. Open the lid, look, blink — you're in.">
+  <meta property="og:image" content="assets/icon.png">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    document.documentElement.classList.add("js");
+    // If the animation scripts can't load, show the plain page instead of the preloader.
+    setTimeout(() => { if (!window.__ready) document.documentElement.classList.remove("js"); }, 4000);
+  </script>
+</head>
+<body>
+  <!-- Reusable Face ID glyph -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <g id="glyph-frame">
+        <path d="M0 26V16Q0 0 16 0H26M74 0H84Q100 0 100 16V26M100 74V84Q100 100 84 100H74M26 100H16Q0 100 0 84V74"/>
+        <path d="M50 33V57H44"/>
+        <path d="M33 70Q50 80 67 70"/>
+      </g>
+    </defs>
+  </svg>
+
+  <div class="preloader" aria-hidden="true">
+    <svg class="preloader__glyph" viewBox="-8 -8 116 116">
+      <use href="#glyph-frame"/>
+      <path d="M33 33V42M67 33V42"/>
+    </svg>
+    <div class="preloader__count"><span>0</span>%</div>
+  </div>
+
+  <div class="cursor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav__brand" href="#top" aria-label="FaceMacOS home">
+      <img src="assets/icon.png" alt="" width="32" height="32">
+      <span>FaceMacOS</span>
+    </a>
+    <nav class="nav__links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+    </nav>
+    <a class="nav__cta magnetic" href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS/releases/latest">Download</a>
+  </header>
+
+  <main id="top">
+    <!-- HERO: scroll opens the lid and plays the unlock -->
+    <section class="hero" aria-label="Introduction">
+      <div class="hero__inner">
+        <p class="eyebrow hero__eyebrow">Face ID for every Mac</p>
+        <h1 class="hero__title">
+          <span class="hero__line hero__line--a">Your face is</span>
+          <span class="hero__line hero__line--b">the <em>password.</em></span>
+        </h1>
+        <h2 class="hero__welcome" aria-hidden="true">Welcome <em>back.</em></h2>
+
+        <div class="mac" aria-hidden="true">
+          <img class="mac__photo" src="assets/macbook-pro.webp" alt="" width="1800" height="1724" fetchpriority="high">
+          <!-- Placed over the photo's display; main.js warps it to the exact screen corners. -->
+          <div class="mac__screen">
+            <div class="desktop">
+              <div class="desktop__menubar"><span class="desktop__apple"></span><b>FaceMacOS</b><span>File</span><span>Edit</span><span>View</span><em>Sun 27 Sep 9:41</em></div>
+              <div class="banner">
+                <img src="assets/icon.png" alt="">
+                <div class="banner__text"><b>FaceMacOS</b><span>Unlocked with Face ID</span></div>
+                <time>now</time>
+              </div>
+            </div>
+            <div class="lockscreen">
+              <div class="lockscreen__date">Sunday 27 September</div>
+              <div class="lockscreen__time">9:41</div>
+              <div class="lockscreen__user">
+                <div class="lockscreen__avatar"></div>
+                <div class="lockscreen__name">Wissem</div>
+                <div class="lockscreen__hint">Look at the camera</div>
+              </div>
+            </div>
+            <div class="notch">
+              <div class="notch__content">
+                <svg class="notch__ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><circle class="notch__arc" cx="50" cy="50" r="46"/></svg>
+                <svg class="notch__glyph" viewBox="-8 -8 116 116">
+                  <use href="#glyph-frame"/>
+                  <path class="eye" d="M33 33V42"/>
+                  <path class="eye" d="M67 33V42"/>
+                </svg>
+                <svg class="notch__check" viewBox="0 0 100 100"><path d="M18 52L42 76L84 28"/></svg>
+                <div class="notch__label">
+                  <span class="notch__text notch__text--scan">Face ID</span>
+                  <span class="notch__text notch__text--blink">Blink to confirm</span>
+                  <span class="notch__text notch__text--done">Unlocked</span>
+                </div>
+              </div>
+            </div>
+            <div class="mac__off"></div>
+            <div class="mac__glare"></div>
+          </div>
+        </div>
+
+        <div class="hero__scroll">
+          <span>Scroll to wake it up</span>
+          <i></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <section class="marquee" aria-label="Highlights">
+      <div class="marquee__row">
+        <div class="marquee__track">
+          <span>No clicks</span><b>●</b><span>No typing</span><b>●</b><span>On-device</span><b>●</b><span>Open source</span><b>●</b>
+          <span>No clicks</span><b>●</b><span>No typing</span><b>●</b><span>On-device</span><b>●</b><span>Open source</span><b>●</b>
+        </div>
+      </div>
+      <div class="marquee__row marquee__row--reverse">
+        <div class="marquee__track">
+          <span><em>Open.</em></span><b>●</b><span><em>Look.</em></span><b>●</b><span><em>Blink.</em></span><b>●</b><span><em>You're in.</em></span><b>●</b>
+          <span><em>Open.</em></span><b>●</b><span><em>Look.</em></span><b>●</b><span><em>Blink.</em></span><b>●</b><span><em>You're in.</em></span><b>●</b>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS: horizontal scroll -->
+    <section class="how" id="how" aria-label="How it works">
+      <div class="how__pin">
+        <div class="how__head">
+          <p class="eyebrow">How it works</p>
+          <h2 class="split">Four steps.<br>Zero effort.</h2>
+        </div>
+        <div class="how__track">
+          <article class="step">
+            <div class="step__num">01</div>
+            <svg class="step__art step__art--lid" viewBox="0 0 200 140">
+              <path class="draw" d="M30 118H170"/>
+              <path class="lid draw" d="M44 116L156 116"/>
+              <path class="draw" d="M20 118Q100 132 180 118"/>
+            </svg>
+            <h3>Close the lid</h3>
+            <p>Walk away. FaceMacOS keeps running quietly in your menu bar, even after a restart.</p>
+          </article>
+          <article class="step">
+            <div class="step__num">02</div>
+            <svg class="step__art" viewBox="0 0 200 140">
+              <rect class="draw" x="44" y="14" width="112" height="84" rx="8"/>
+              <path class="draw" d="M30 112H170"/>
+              <path class="draw" d="M20 112Q100 126 180 112"/>
+              <path class="accent-stroke pulse" d="M84 14H116V22Q116 26 112 26H88Q84 26 84 22Z"/>
+            </svg>
+            <h3>Open it</h3>
+            <p>The moment the screen wakes, scanning starts. The Face ID animation appears in the notch — right on the lock screen.</p>
+          </article>
+          <article class="step">
+            <div class="step__num">03</div>
+            <svg class="step__art step__art--eye" viewBox="0 0 200 140">
+              <path class="draw" d="M40 70Q100 10 160 70Q100 130 40 70Z"/>
+              <circle class="draw iris" cx="100" cy="70" r="20"/>
+              <circle class="accent-fill iris" cx="100" cy="70" r="8"/>
+            </svg>
+            <h3>Look &amp; blink</h3>
+            <p>Your face is matched on-device, and a blink proves you're really there — a photo won't do.</p>
+          </article>
+          <article class="step">
+            <div class="step__num">04</div>
+            <svg class="step__art" viewBox="0 0 200 140">
+              <circle class="draw" cx="100" cy="70" r="50"/>
+              <path class="accent-stroke draw check" d="M76 72L94 90L126 52"/>
+            </svg>
+            <h3>You're in</h3>
+            <p>FaceMacOS types your password for you. Lid open to desktop in about two seconds.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATEMENT: word-by-word scrub -->
+    <section class="statement" aria-label="About">
+      <p class="statement__text">
+        Apple put Face ID in your iPhone. We put it in the Mac you already own — using the camera it already has, running entirely on the chip it already has.
+      </p>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" id="features" aria-label="Features">
+      <div class="features__head">
+        <p class="eyebrow">Features</p>
+        <h2 class="split">More than a <em>lock screen.</em></h2>
+      </div>
+      <div class="features__grid">
+        <article class="card tilt">
+          <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0"/><rect x="4" y="11" width="16" height="10" rx="2"/></svg></div>
+          <h3>Automatic unlock</h3>
+          <p>Scanning starts as soon as you open the lid or wake the screen. No clicks, no keys.</p>
+        </article>
+        <article class="card tilt">
+          <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M3 5h18M8 5v3a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V5"/></svg></div>
+          <h3>Notch animations</h3>
+          <p>Scanning, success and failure animations live in the notch — visible even above the lock screen.</p>
+        </article>
+        <article class="card tilt">
+          <div class="card__icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
+          <h3>Face vault</h3>
+          <p>A private note that opens only for your face. Press ⌥⌘F, look, blink.</p>
+        </article>
+        <article class="card tilt">
+          <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <h3>Gesture commands</h3>
+          <p>Blink twice to open an app. Look left to run a Shortcut. Your face becomes a keyboard.</p>
+        </article>
+        <article class="card tilt">
+          <div class="card__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18"/></svg></div>
+          <h3>Your color</h3>
+          <p>Pick any accent color for the animations and the interface. Make it feel like yours.</p>
+        </article>
+        <article class="card tilt">
+          <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/></svg></div>
+          <h3>Private by design</h3>
+          <p>No cloud, no account, no photos saved. Face data and password stay in your Keychain.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- COLOR -->
+    <section class="color" aria-label="Accent color">
+      <div class="color__copy">
+        <p class="eyebrow">Personalize</p>
+        <h2 class="split">Make it <em>yours.</em></h2>
+        <p class="color__lead">Choose the color of every scan, ring and checkmark. Try it — the whole page follows.</p>
+        <div class="swatches" role="radiogroup" aria-label="Accent color">
+          <button class="swatch is-active" role="radio" aria-checked="true" aria-label="Blue" style="--c:#2997ff"></button>
+          <button class="swatch" role="radio" aria-checked="false" aria-label="Purple" style="--c:#bf5af2"></button>
+          <button class="swatch" role="radio" aria-checked="false" aria-label="Pink" style="--c:#ff375f"></button>
+          <button class="swatch" role="radio" aria-checked="false" aria-label="Orange" style="--c:#ff9f0a"></button>
+          <button class="swatch" role="radio" aria-checked="false" aria-label="Yellow" style="--c:#ffd60a"></button>
+          <button class="swatch" role="radio" aria-checked="false" aria-label="Green" style="--c:#30d158"></button>
+          <button class="swatch" role="radio" aria-checked="false" aria-label="Teal" style="--c:#40c8e0"></button>
+          <button class="swatch" role="radio" aria-checked="false" aria-label="Graphite" style="--c:#a1a1a6"></button>
+        </div>
+      </div>
+      <div class="color__demo" aria-hidden="true">
+        <div class="pill">
+          <div class="pill__visual">
+            <svg class="pill__ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><circle class="pill__arc" cx="50" cy="50" r="46"/></svg>
+            <svg class="pill__glyph" viewBox="-8 -8 116 116"><use href="#glyph-frame"/><path d="M33 33V42M67 33V42"/></svg>
+            <svg class="pill__check" viewBox="0 0 100 100"><path d="M18 52L42 76L84 28"/></svg>
+          </div>
+          <div class="pill__label">Face ID</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRIVACY / STATS -->
+    <section class="privacy" id="privacy" aria-label="Privacy">
+      <div class="privacy__head">
+        <p class="eyebrow">Privacy</p>
+        <h2 class="split">Nothing leaves <em>your Mac.</em></h2>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat__num" data-count="0">0</div><p>images ever saved — frames are analyzed in memory, then discarded</p></div>
+        <div class="stat"><div class="stat__num" data-count="100" data-suffix="%">0</div><p>on-device — no servers, no account, works offline</p></div>
+        <div class="stat"><div class="stat__num" data-count="8">0</div><p>head poses captured at setup for a robust face profile</p></div>
+        <div class="stat"><div class="stat__num" data-count="1">0</div><p>blink required to unlock, so a photo can't fool it</p></div>
+      </div>
+      <p class="privacy__note">A regular webcam is not as secure as Apple's 3D Face ID. FaceMacOS is built for convenience on your personal Mac — keep your password for anything sensitive.</p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="download" aria-label="Download">
+      <h2 class="cta__title">
+        <span class="cta__line">Open the lid.</span>
+        <span class="cta__line"><em>That's it.</em></span>
+      </h2>
+      <a class="cta__button magnetic" href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS/releases/latest">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+        <span>Download for Mac</span>
+      </a>
+      <p class="cta__meta">Free · macOS 13 Ventura or later · Apple silicon &amp; Intel</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 FaceMacOS · Made by Wissem Sahli</span>
+    <span class="footer__credits">
+      MacBook photo: <a href="https://commons.wikimedia.org/wiki/File:MacBook_Pro_16_(M1_Pro,_2021)_-_Wikipedia.jpg">Premeditated</a>,
+      <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> (background removed; this cutout is shared under the same license).
+      Wallpaper: <a href="https://commons.wikimedia.org/wiki/File:Yosemite_Valley_(Unsplash).jpg">Matthias Mullie</a>, CC0.
+    </span>
+    <a href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS">GitHub</a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

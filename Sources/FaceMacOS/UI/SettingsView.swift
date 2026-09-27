@@ -6,14 +6,54 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Section("General") {
+            Section {
                 Toggle("Show icon in Dock", isOn: $settings.showInDock)
-                Toggle("Launch at login", isOn: Binding(
+                Toggle("Open at login and keep running", isOn: Binding(
                     get: { settings.launchAtLogin },
                     set: { settings.setLaunchAtLogin($0) }
                 ))
+                if settings.launchAtLoginNeedsApproval {
+                    HStack {
+                        Label("Allow FaceMacOS in Login Items to finish turning this on.", systemImage: "exclamationmark.circle")
+                            .foregroundStyle(.orange)
+                        Spacer()
+                        Button("Open Login Items…") { settings.openLoginItemsSettings() }
+                    }
+                    .font(.callout)
+                }
                 if let error = settings.launchAtLoginError {
                     Text(error).font(.caption).foregroundStyle(.red)
+                }
+            } header: {
+                Text("General")
+            } footer: {
+                Text("FaceMacOS starts when you log in and restarts itself if it stops unexpectedly. Closing the window keeps it running in the menu bar; choose Quit from the menu bar icon to stop it until your next login.")
+            }
+
+            Section("Appearance") {
+                LabeledContent("Accent color") {
+                    HStack(spacing: 8) {
+                        ForEach(AccentChoice.allCases.filter { $0 != .custom }) { choice in
+                            AccentSwatch(color: choice.color, selected: settings.accent == choice) {
+                                settings.accent = choice
+                            }
+                            .help(choice.title)
+                        }
+                        ColorPicker("Custom", selection: Binding(
+                            get: { settings.customAccent },
+                            set: { settings.customAccent = $0; settings.accent = .custom }
+                        ), supportsOpacity: false)
+                        .labelsHidden()
+                        .help("Custom color")
+                        .overlay {
+                            if settings.accent == .custom {
+                                Circle().stroke(Color.primary, lineWidth: 2).frame(width: 30, height: 30).allowsHitTesting(false)
+                            }
+                        }
+                    }
+                }
+                LabeledContent("Preview") {
+                    Button("Play Notch Animations") { controller.runDemo() }
                 }
             }
 
@@ -30,10 +70,6 @@ struct SettingsView: View {
                 LabeledContent("Gesture command", value: "⌥⌘G")
             }
 
-            Section("Animations") {
-                Button("Preview Notch Animations") { controller.runDemo() }
-            }
-
             Section {
                 Button("Delete All Data…", role: .destructive) { controller.deleteAllData() }
             } footer: {
@@ -42,5 +78,23 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Settings")
+    }
+}
+
+private struct AccentSwatch: View {
+    let color: Color
+    let selected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Circle()
+                .fill(color)
+                .frame(width: 20, height: 20)
+                .overlay { Circle().stroke(Color.primary.opacity(selected ? 1 : 0), lineWidth: 2).padding(-4) }
+                .padding(4)
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
     }
 }

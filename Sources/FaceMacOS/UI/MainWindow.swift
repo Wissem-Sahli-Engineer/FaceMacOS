@@ -34,7 +34,7 @@ final class MainWindowController: NSObject, NSWindowDelegate {
             window.setFrameAutosaveName("FaceMacOSMain")
             self.window = window
         }
-        NSApp.activate()
+        NSApp.bringToFront()
         window?.makeKeyAndOrderFront(nil)
     }
 
@@ -84,12 +84,13 @@ struct MainView: View {
         } detail: {
             switch controller.selectedSection ?? .overview {
             case .overview: OverviewView(controller: controller, auth: auth, settings: settings, unlocker: unlocker)
-            case .camera: LiveCameraView(auth: auth)
+            case .camera: LiveCameraView(auth: auth, settings: settings)
             case .gestures: GesturesView(controller: controller, settings: settings)
             case .unlock: UnlockView(controller: controller, auth: auth, settings: settings, unlocker: unlocker)
             case .settings: SettingsView(controller: controller, settings: settings)
             }
         }
+        .tint(settings.accentColor)
     }
 }
 
@@ -104,7 +105,7 @@ struct OverviewView: View {
             Section {
                 HStack(spacing: 20) {
                     FaceIDGlyph()
-                        .stroke(auth.isEnrolled ? Color.green : Color.secondary, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                        .stroke(auth.isEnrolled ? settings.accentColor : Color.secondary, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
                         .frame(width: 60, height: 60)
                         .padding(10)
                     VStack(alignment: .leading, spacing: 6) {
@@ -177,7 +178,7 @@ struct StepRow<Accessory: View>: View {
         HStack(spacing: 12) {
             Image(systemName: done ? "checkmark.circle.fill" : "circle")
                 .font(.title3)
-                .foregroundStyle(done ? Color.green : Color.secondary)
+                .foregroundStyle(done ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                 Text(detail).font(.caption).foregroundStyle(.secondary)

@@ -17,10 +17,10 @@ struct UnlockView: View {
                 Toggle("Unlock the lock screen with Face ID", isOn: $settings.unlockLockScreen)
                 LabeledContent("Status") {
                     Text(unlocker.missingRequirement.map { settings.unlockLockScreen ? "Not ready — \($0)" : $0 } ?? unlocker.state.description)
-                        .foregroundStyle(unlocker.isReady ? Color.green : Color.secondary)
+                        .foregroundStyle(unlocker.isReady ? settings.accentColor : Color.secondary)
                 }
             } footer: {
-                Text("Lock your Mac (⌃⌘Q). After a few seconds, look at the camera and blink. FaceMacOS checks your face, then enters your password for you.")
+                Text("Close the lid (or lock with ⌃⌘Q) and open it again. The Face ID animation appears at the top of the lock screen — look at the camera and blink. FaceMacOS checks your face, then enters your password for you. No clicks needed.")
             }
 
             Section("Requirements") {
@@ -65,7 +65,7 @@ struct UnlockView: View {
                     }
                 }
 
-                StepRow(done: settings.launchAtLogin, title: "Launch at login (recommended)", detail: "So unlocking works after a restart.") {
+                StepRow(done: settings.launchAtLogin, title: "Open at login (recommended)", detail: "So unlocking works after a restart, and FaceMacOS restarts itself if it stops.") {
                     if !settings.launchAtLogin { Button("Enable") { settings.setLaunchAtLogin(true) } }
                 }
             }

@@ -27,7 +27,7 @@ mlmodel = ct.convert(
                          bias=[-127.5 / 128.0] * 3, color_layout=ct.colorlayout.RGB)],
     outputs=[ct.TensorType(name="embedding")],
     convert_to="mlprogram",
-    minimum_deployment_target=ct.target.macOS14,
+    minimum_deployment_target=ct.target.macOS13,
 )
 
 # 8-bit weights: ~4x smaller with negligible embedding change.

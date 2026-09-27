@@ -77,10 +77,10 @@ enum SystemControl {
 enum LoginPassword {
     private static let account = "login-password"
 
-    static var isStored: Bool { Keychain.read(account) != nil }
+    static var isStored: Bool { Keychain.exists(account) }
 
-    static func load() -> String? {
-        Keychain.read(account).flatMap { String(data: $0, encoding: .utf8) }
+    static func load(allowPrompt: Bool = true) -> String? {
+        Keychain.read(account, allowPrompt: allowPrompt).flatMap { String(data: $0, encoding: .utf8) }
     }
 
     static func save(_ password: String) -> OSStatus {

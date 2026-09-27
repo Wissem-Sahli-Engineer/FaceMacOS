@@ -96,6 +96,9 @@ final class FaceAuthenticator: ObservableObject {
     private var template: FaceTemplate?
     private var activeSession: FrameSession?
     private var operationInProgress = false
+    private var currentOperation = ""
+    private var isLockScreenOperation = false
+    private var dismissRequested = false
     private var monitorTask: Task<Void, Never>?
 
     var threshold: Float? { template?.threshold }
@@ -117,7 +120,7 @@ final class FaceAuthenticator: ObservableObject {
 
     @discardableResult
     func enroll() async -> Bool {
-        guard begin() else { return false }
+        guard await begin("enroll") else { return false }
         defer { end() }
         phase = .enrolling(filled: [], hint: "Position your face in the frame")
         guard let session = await openSession(timeout: .seconds(45), options: AnalyzerOptions(facePreview: true)) else {
@@ -181,9 +184,16 @@ final class FaceAuthenticator: ObservableObject {
 
     // MARK: - Authentication
 
+    /// `preempt` stops any other face operation first (the lock screen takes priority).
+    /// `onVerified` runs while the success animation is showing, before the result is returned.
     @discardableResult
-    func authenticate(strict: Bool? = nil, timeout: Duration = .seconds(7)) async -> Bool {
-        guard begin() else { return false }
+    func authenticate(
+        strict: Bool? = nil,
+        timeout: Duration = .seconds(7),
+        preempt: Bool = false,
+        onVerified: () async -> Void = {}
+    ) async -> Bool {
+        guard await begin("authenticate", preempt: preempt) else { return false }
         defer { end() }
         phase = .scanning(hint: "")
         guard let template else { return await finish(false, "Set up Face ID first") }
@@ -205,7 +215,10 @@ final class FaceAuthenticator: ObservableObject {
         closeSession()
 
         switch outcome {
-        case .verified: return await finish(true, "Unlocked")
+        case .verified:
+            phase = .success("Unlocked")
+            await onVerified()
+            return await finish(true, "Unlocked")
         case .matched(let hint): return await finish(false, hint.isEmpty ? "Liveness check failed" : hint)
         case .searching: return await finish(false, "Face Not Recognized")
         }
@@ -213,7 +226,7 @@ final class FaceAuthenticator: ObservableObject {
 
     /// Verifies the owner, then waits for a gesture and runs the matching action.
     func faceCommand(_ actions: [FaceAction], perform: (FaceAction) -> Void) async {
-        guard begin() else { return }
+        guard await begin("gesture command") else { return }
         defer { end() }
         phase = .scanning(hint: "")
         guard !actions.isEmpty else { _ = await finish(false, "No gestures configured"); return }
@@ -253,9 +266,10 @@ final class FaceAuthenticator: ObservableObject {
         }
     }
 
-    /// Cheap face-presence watch (rectangles only, 5 fps). Returns nil if the camera is unavailable or busy.
+    /// Cheap face-presence watch (rectangles only, 5 fps), used on the lock screen so it preempts other operations.
+    /// Returns nil if the camera is unavailable or busy.
     func waitFor(_ goal: PresenceGoal, timeout: Duration) async -> Bool? {
-        guard begin() else { return nil }
+        guard await begin("presence", preempt: true) else { return nil }
         defer { end() }
         guard let session = await openSession(timeout: timeout, options: .presence, maxFPS: Self.presenceFPS) else { return nil }
 
@@ -344,7 +358,7 @@ final class FaceAuthenticator: ObservableObject {
     // MARK: - Demo
 
     func runDemo() async {
-        guard begin() else { return }
+        guard await begin("demo") else { return }
         defer { end() }
         phase = .scanning(hint: "")
         try? await Task.sleep(for: .seconds(1.6))
@@ -369,16 +383,42 @@ final class FaceAuthenticator: ObservableObject {
 
     // MARK: - Helpers
 
-    private func begin() -> Bool {
-        guard !operationInProgress else { return false }
+    private func begin(_ name: String, preempt: Bool = false) async -> Bool {
+        if operationInProgress, preempt {
+            Log.unlock.notice("Stopping \(self.currentOperation, privacy: .public) to start \(name, privacy: .public)")
+            closeSession()
+            var waited = 0
+            while operationInProgress, waited < 40 {
+                try? await Task.sleep(for: .milliseconds(100))
+                waited += 1
+            }
+        }
+        guard !operationInProgress else {
+            Log.app.error("Can't start \(name, privacy: .public): \(self.currentOperation, privacy: .public) is running")
+            return false
+        }
         stopMonitor()
         operationInProgress = true
+        currentOperation = name
+        isLockScreenOperation = preempt
+        dismissRequested = false
         return true
+    }
+
+    /// Ends a lock-screen scan right away and closes the notch without a failure animation
+    /// (the user unlocked the Mac another way).
+    func dismissLockScreenOperation() {
+        guard operationInProgress, isLockScreenOperation else { return }
+        dismissRequested = true
+        closeSession()
+        preview = nil
+        phase = .idle
     }
 
     private func end() {
         closeSession()
         operationInProgress = false
+        currentOperation = ""
     }
 
     private func openSession(timeout: Duration, options: AnalyzerOptions, maxFPS: Double = recognitionFPS) async -> FrameSession? {
@@ -418,6 +458,10 @@ final class FaceAuthenticator: ObservableObject {
     private func finish(_ success: Bool, _ message: String) async -> Bool {
         closeSession()
         preview = nil
+        if !success, dismissRequested || Task.isCancelled {
+            phase = .idle
+            return false
+        }
         phase = success ? .success(message) : .failure(message)
         try? await Task.sleep(for: .seconds(success ? 1.1 : 1.6))
         phase = .idle

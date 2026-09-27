@@ -14,13 +14,28 @@ scripts/build.sh release
 
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' Resources/Info.plist)"
 DMG="build/FaceMacOS-$VERSION.dmg"
+
+# dmgbuild lays out the drag-to-Applications window (background, icon positions) without scripting Finder.
+if [[ ! -x .venv/bin/dmgbuild ]]; then
+  python3 -m venv .venv
+  .venv/bin/pip install --quiet dmgbuild
+fi
+if [[ ! -f Resources/dmg-background.tiff ]]; then
+  WORK="$(mktemp -d)"
+  swift scripts/make_dmg_background.swift "$WORK/bg.png" 1
+  swift scripts/make_dmg_background.swift "$WORK/bg@2x.png" 2
+  tiffutil -cathidpicheck "$WORK/bg.png" "$WORK/bg@2x.png" -out Resources/dmg-background.tiff >/dev/null
+  rm -rf "$WORK"
+fi
+
+# Package a clean copy (no extended attributes) so the signature verifies on users' Macs.
 STAGING="$(mktemp -d)"
 trap 'rm -rf "$STAGING"' EXIT
+ditto --norsrc --noextattr --noacl build/FaceMacOS.app "$STAGING/FaceMacOS.app"
+codesign --verify --strict --deep "$STAGING/FaceMacOS.app"
 
-cp -R build/FaceMacOS.app "$STAGING/"
-ln -s /Applications "$STAGING/Applications"
 rm -f "$DMG"
-hdiutil create -volname "FaceMacOS" -srcfolder "$STAGING" -ov -format UDZO "$DMG" >/dev/null
+.venv/bin/dmgbuild -s scripts/dmg_settings.py -D app="$STAGING/FaceMacOS.app" "FaceMacOS" "$DMG" >/dev/null
 
 if [[ -n "${SIGN_IDENTITY:-}" ]]; then
   codesign --force --sign "$SIGN_IDENTITY" --timestamp "$DMG"

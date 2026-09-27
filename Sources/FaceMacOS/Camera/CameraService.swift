@@ -10,8 +10,17 @@ final class CameraService: NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
     private let session = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "facemacos.camera.session")
     private let videoQueue = DispatchQueue(label: "facemacos.camera.video", qos: .userInteractive)
-    private var isConfigured = false
+    private var input: AVCaptureDeviceInput?
+    private var needsReconfigure = false
     private var frameHandler: ((CVPixelBuffer) -> Void)?
+
+    override init() {
+        super.init()
+        // Closing the lid or sleeping can leave the session in an error state; rebuild it on the next start.
+        NotificationCenter.default.addObserver(forName: AVCaptureSession.runtimeErrorNotification, object: session, queue: nil) { [weak self] _ in
+            self?.sessionQueue.async { self?.needsReconfigure = true }
+        }
+    }
 
     static func requestAccess() async -> Bool {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -22,7 +31,7 @@ final class CameraService: NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
     }
 
     func start(onFrame: @escaping (CVPixelBuffer) -> Void) throws {
-        try configureIfNeeded()
+        try sessionQueue.sync { try configureIfNeeded() }
         videoQueue.sync { frameHandler = onFrame }
         sessionQueue.async { [session] in
             if !session.isRunning { session.startRunning() }
@@ -36,10 +45,21 @@ final class CameraService: NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
         }
     }
 
+    /// Runs on sessionQueue.
     private func configureIfNeeded() throws {
-        guard !isConfigured else { return }
+        if let input, input.device.isConnected, !needsReconfigure { return }
+        if session.isRunning { session.stopRunning() }
+        session.beginConfiguration()
+        session.inputs.forEach(session.removeInput)
+        session.outputs.forEach(session.removeOutput)
+        session.commitConfiguration()
+        input = nil
+        needsReconfigure = false
+
+        let external: AVCaptureDevice.DeviceType
+        if #available(macOS 14, *) { external = .external } else { external = .externalUnknown }
         let discovery = AVCaptureDevice.DiscoverySession(
-            deviceTypes: [.builtInWideAngleCamera, .external],
+            deviceTypes: [.builtInWideAngleCamera, external],
             mediaType: .video,
             position: .unspecified
         )
@@ -48,7 +68,7 @@ final class CameraService: NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
             ?? AVCaptureDevice.default(for: .video)
         else { throw CameraError.noDevice }
 
-        let input = try AVCaptureDeviceInput(device: device)
+        let newInput = try AVCaptureDeviceInput(device: device)
         let output = AVCaptureVideoDataOutput()
         output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
         output.alwaysDiscardsLateVideoFrames = true
@@ -57,14 +77,14 @@ final class CameraService: NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
         session.beginConfiguration()
         defer { session.commitConfiguration() }
         if session.canSetSessionPreset(.hd1280x720) { session.sessionPreset = .hd1280x720 }
-        guard session.canAddInput(input) else { throw CameraError.cannotAddInput }
-        session.addInput(input)
+        guard session.canAddInput(newInput) else { throw CameraError.cannotAddInput }
+        session.addInput(newInput)
         guard session.canAddOutput(output) else {
-            session.removeInput(input)
+            session.removeInput(newInput)
             throw CameraError.cannotAddOutput
         }
         session.addOutput(output)
-        isConfigured = true
+        input = newInput
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
