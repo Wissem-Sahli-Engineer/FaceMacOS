@@ -24,7 +24,7 @@
   // ---------- Smooth scroll ----------
   let lenis = null;
   if (!reduceMotion && window.Lenis) {
-    lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 1 });
+    lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 1 });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add((time) => lenis.raf(time * 1000));
     gsap.ticker.lagSmoothing(0);
@@ -148,9 +148,9 @@
     gsap
       .timeline({
         defaults: { ease: "none" },
-        scrollTrigger: { trigger: ".hero", start: "top top", end: "+=280%", scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "+=280%", scrub: true, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
       })
-      .to([".hero__title", ".hero__eyebrow"], { yPercent: -40, autoAlpha: 0, duration: 1.8 }, 0)
+      .fromTo([".hero__title", ".hero__eyebrow"], { yPercent: 0, autoAlpha: 1 }, { yPercent: -40, autoAlpha: 0, duration: 1.8, immediateRender: false }, 0)
       .to(".hero__scroll", { autoAlpha: 0, duration: 0.6 }, 0)
       .to(mac, { y: () => innerHeight / 2 - screenCenter(), scale: zoom, duration: 2.6, ease: "power2.inOut" }, 0)
       .to(".mac__off", { autoAlpha: 0, duration: 0.9 }, 1.4)
@@ -184,24 +184,35 @@
   // ---------- Marquee (speeds up and skews with scroll velocity) ----------
   function marquee() {
     const loops = $$(".marquee__track").map((track, index) =>
-      gsap.fromTo(track, { xPercent: index ? -50 : 0 }, { xPercent: index ? 0 : -50, duration: 30, ease: "none", repeat: -1 })
+      gsap.fromTo(track, { xPercent: index ? -50 : 0 }, { xPercent: index ? 0 : -50, duration: 30, ease: "none", repeat: -1, paused: true })
     );
     const skew = gsap.quickTo(".marquee__track", "skewX", { duration: 0.4, ease: "power3" });
     let boost = 0;
+    let skewed = false;
+    // Only runs while the marquee is on screen, and only touches the tweens when something changed.
+    const tick = () => {
+      if (boost < 0.01) return;
+      boost *= 0.92;
+      loops.forEach((loop) => loop.timeScale(1 + boost));
+      if (skewed && boost < 0.1) {
+        skewed = false;
+        skew(0);
+      }
+    };
     ScrollTrigger.create({
       trigger: ".marquee",
       start: "top bottom",
       end: "bottom top",
+      onToggle: (self) => {
+        loops.forEach((loop) => (self.isActive ? loop.play() : loop.pause()));
+        self.isActive ? gsap.ticker.add(tick) : gsap.ticker.remove(tick);
+      },
       onUpdate: (self) => {
         const velocity = self.getVelocity() / 250;
-        boost = Math.min(Math.abs(velocity), 8);
-        skew(gsap.utils.clamp(-8, 8, -velocity * 1.4));
+        boost = Math.min(Math.abs(velocity), 6);
+        skewed = true;
+        skew(gsap.utils.clamp(-6, 6, -velocity * 1.2));
       },
-    });
-    gsap.ticker.add(() => {
-      boost *= 0.93;
-      loops.forEach((loop) => loop.timeScale(1 + boost));
-      if (boost < 0.05) skew(0);
     });
   }
 
@@ -231,7 +242,7 @@
           start: "top top",
           end: () => "+=" + distance(),
           pin: true,
-          scrub: 1,
+          scrub: true,
           invalidateOnRefresh: true,
         },
       });
@@ -312,33 +323,73 @@
     });
   }
 
-  // ---------- Feature cards: staggered entry + 3D tilt ----------
-  function features() {
-    ScrollTrigger.batch(".card", {
-      start: "top 88%",
-      onEnter: (batch) =>
-        gsap.fromTo(batch, { y: 90, autoAlpha: 0, rotateX: -14 }, {
-          y: 0, autoAlpha: 1, rotateX: 0, duration: 1.1, ease: "expo.out", stagger: 0.09, overwrite: true,
-        }),
-    });
-    gsap.set(".card", { autoAlpha: 0, transformPerspective: 900 });
+  // ---------- Features: pinned story, one feature at a time ----------
+  function showcase() {
+    const items = $$(".feature");
+    const scenes = $$(".scene");
+    const count = items.length;
+    let current = -1;
 
-    if (!finePointer) return;
-    $$(".tilt").forEach((card) => {
-      const rotateX = gsap.quickTo(card, "rotateX", { duration: 0.5, ease: "power3" });
-      const rotateY = gsap.quickTo(card, "rotateY", { duration: 0.5, ease: "power3" });
-      card.addEventListener("pointermove", (event) => {
-        const box = card.getBoundingClientRect();
-        const px = (event.clientX - box.left) / box.width;
-        const py = (event.clientY - box.top) / box.height;
-        rotateY((px - 0.5) * 10);
-        rotateX((0.5 - py) * 10);
-        card.style.setProperty("--mx", `${px * 100}%`);
-        card.style.setProperty("--my", `${py * 100}%`);
+    // Small loops that make each scene feel alive while it is showing.
+    const loops = [
+      gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1.2 })
+        .fromTo(".mini-notch__check", { strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" })
+        .to({}, { duration: 1 }),
+      gsap.timeline({ paused: true, repeat: -1 })
+        .to(".scene--notch .spin", { rotation: 360, svgOrigin: "50 50", duration: 1.1, ease: "none" }, 0)
+        .to(".scene--notch .blink", { scaleY: 0.1, duration: 0.12, yoyo: true, repeat: 1 }, 0.5),
+      gsap.timeline({ paused: true })
+        .fromTo(".vault-text", { filter: "blur(7px)", opacity: 0.4 }, { filter: "blur(0px)", opacity: 1, duration: 0.9, ease: "power2.out", delay: 0.4 })
+        .fromTo(".vault-status .shackle", { y: 0 }, { y: -3, duration: 0.3 }, 0.4),
+      gsap.timeline({ paused: true, repeat: -1 }),
+      gsap.timeline({ paused: true }),
+      gsap.timeline({ paused: true, repeat: -1, yoyo: true })
+        .to(".shield", { scale: 1.04, duration: 1.4, ease: "sine.inOut", transformOrigin: "50% 50%" }),
+    ];
+    $$(".gesture").forEach((row) => {
+      loops[3]
+        .add(() => $$(".gesture").forEach((other) => other.classList.toggle("is-hot", other === row)))
+        .to({}, { duration: 1.1 });
+    });
+
+    function activate(index) {
+      if (index === current) return;
+      const previous = current;
+      current = index;
+      items.forEach((item, i) => item.classList.toggle("is-active", i === index));
+      if (previous >= 0) {
+        loops[previous].pause();
+        gsap.to(scenes[previous], { autoAlpha: 0, y: -24, scale: 0.97, duration: 0.35, ease: "power2.in", overwrite: true });
+      }
+      gsap.fromTo(scenes[index], { autoAlpha: 0, y: 36, scale: 0.97 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.8, ease: "expo.out", overwrite: true });
+      gsap.fromTo($$("[data-in]", scenes[index]), { y: 26, autoAlpha: 0 }, {
+        y: 0, autoAlpha: 1, duration: 0.7, ease: "power3.out", stagger: 0.07, delay: 0.1, overwrite: true,
       });
-      card.addEventListener("pointerleave", () => {
-        rotateX(0);
-        rotateY(0);
+      loops[index].restart();
+    }
+
+    gsap.set(scenes, { autoAlpha: 0 });
+    activate(0);
+
+    const rail = gsap.quickSetter(".showcase__rail i", "scaleY");
+    const trigger = ScrollTrigger.create({
+      trigger: ".showcase",
+      start: "top top",
+      end: () => "+=" + count * innerHeight * 0.75,
+      pin: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        rail(self.progress);
+        activate(Math.min(count - 1, Math.floor(self.progress * count)));
+      },
+    });
+
+    // Clicking a title scrolls to its step.
+    items.forEach((item, i) => {
+      $(".feature__button", item).addEventListener("click", () => {
+        const y = trigger.start + ((i + 0.5) / count) * (trigger.end - trigger.start);
+        lenis ? lenis.scrollTo(y, { duration: 1 }) : scrollTo({ top: y, behavior: "smooth" });
       });
     });
   }
@@ -448,7 +499,7 @@
     marquee();
     howItWorks();
     textReveals();
-    features();
+    showcase();
     colorPicker();
     counters();
     pointerEffects();

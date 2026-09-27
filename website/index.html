@@ -25,6 +25,7 @@
   <!-- Reusable Face ID glyph -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
+      <path id="github" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
       <g id="glyph-frame">
         <path d="M0 26V16Q0 0 16 0H26M74 0H84Q100 0 100 16V26M100 74V84Q100 100 84 100H74M26 100H16Q0 100 0 84V74"/>
         <path d="M50 33V57H44"/>
@@ -53,7 +54,12 @@
       <a href="#features">Features</a>
       <a href="#privacy">Privacy</a>
     </nav>
-    <a class="nav__cta magnetic" href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS/releases/latest">Download</a>
+    <div class="nav__actions">
+      <a class="nav__github" href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS" aria-label="FaceMacOS on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><use href="#github"/></svg>
+      </a>
+      <a class="nav__cta magnetic" href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS/releases/latest/download/FaceMacOS.dmg" download>Download</a>
+    </div>
   </header>
 
   <main id="top">
@@ -178,7 +184,7 @@
               <path class="accent-stroke draw check" d="M76 72L94 90L126 52"/>
             </svg>
             <h3>You're in</h3>
-            <p>FaceMacOS types your password for you. Lid open to desktop in about two seconds.</p>
+            <p>FaceMacOS types your password for you, and the lock screen slides away.</p>
           </article>
         </div>
       </div>
@@ -191,43 +197,119 @@
       </p>
     </section>
 
-    <!-- FEATURES -->
-    <section class="features" id="features" aria-label="Features">
-      <div class="features__head">
-        <p class="eyebrow">Features</p>
-        <h2 class="split">More than a <em>lock screen.</em></h2>
-      </div>
-      <div class="features__grid">
-        <article class="card tilt">
-          <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0"/><rect x="4" y="11" width="16" height="10" rx="2"/></svg></div>
-          <h3>Automatic unlock</h3>
-          <p>Scanning starts as soon as you open the lid or wake the screen. No clicks, no keys.</p>
-        </article>
-        <article class="card tilt">
-          <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M3 5h18M8 5v3a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V5"/></svg></div>
-          <h3>Notch animations</h3>
-          <p>Scanning, success and failure animations live in the notch — visible even above the lock screen.</p>
-        </article>
-        <article class="card tilt">
-          <div class="card__icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
-          <h3>Face vault</h3>
-          <p>A private note that opens only for your face. Press ⌥⌘F, look, blink.</p>
-        </article>
-        <article class="card tilt">
-          <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></div>
-          <h3>Gesture commands</h3>
-          <p>Blink twice to open an app. Look left to run a Shortcut. Your face becomes a keyboard.</p>
-        </article>
-        <article class="card tilt">
-          <div class="card__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18"/></svg></div>
-          <h3>Your color</h3>
-          <p>Pick any accent color for the animations and the interface. Make it feel like yours.</p>
-        </article>
-        <article class="card tilt">
-          <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/></svg></div>
-          <h3>Private by design</h3>
-          <p>No cloud, no account, no photos saved. Face data and password stay in your Keychain.</p>
-        </article>
+    <!-- FEATURES: pinned story, one feature at a time -->
+    <section class="showcase" id="features" aria-label="Features">
+      <div class="showcase__pin">
+        <div class="showcase__head">
+          <p class="eyebrow">Features</p>
+          <h2 class="split">More than a <em>lock screen.</em></h2>
+        </div>
+        <div class="showcase__body">
+          <div class="showcase__rail" aria-hidden="true"><i></i></div>
+          <ol class="showcase__list">
+            <li class="feature is-active">
+              <button class="feature__button"><span class="feature__num">01</span><span class="feature__title">Unlocks as you open it</span></button>
+              <div class="feature__copy"><p>Scanning starts the moment the screen wakes. No clicks, no keys — lid open to desktop in a few seconds.</p></div>
+            </li>
+            <li class="feature">
+              <button class="feature__button"><span class="feature__num">02</span><span class="feature__title">Lives in the notch</span></button>
+              <div class="feature__copy"><p>Scanning, blink and success animations play right in the notch — even above the lock screen.</p></div>
+            </li>
+            <li class="feature">
+              <button class="feature__button"><span class="feature__num">03</span><span class="feature__title">A vault for your eyes only</span></button>
+              <div class="feature__copy"><p>A private note that stays encrypted in your Keychain and opens only for your face. Press ⌥⌘F, look, blink.</p></div>
+            </li>
+            <li class="feature">
+              <button class="feature__button"><span class="feature__num">04</span><span class="feature__title">Your face is a shortcut</span></button>
+              <div class="feature__copy"><p>Blink twice to open an app. Look left to run a Shortcut. Up to six gestures, each with its own action.</p></div>
+            </li>
+            <li class="feature">
+              <button class="feature__button"><span class="feature__num">05</span><span class="feature__title">Always there</span></button>
+              <div class="feature__copy"><p>Starts when you log in, stays in the menu bar, and restarts itself if it ever stops.</p></div>
+            </li>
+            <li class="feature">
+              <button class="feature__button"><span class="feature__num">06</span><span class="feature__title">Private by design</span></button>
+              <div class="feature__copy"><p>No cloud, no account, no photos saved. Face data and your password never leave your Mac's Keychain.</p></div>
+            </li>
+          </ol>
+
+          <div class="showcase__stage" aria-hidden="true">
+            <!-- 01 unlock -->
+            <div class="scene scene--unlock">
+              <div class="mini-screen" data-in>
+                <div class="mini-notch">
+                  <svg class="mini-notch__check" viewBox="0 0 100 100"><path d="M18 52L42 76L84 28"/></svg>
+                  <span>Unlocked</span>
+                </div>
+                <div class="mini-screen__time">9:41</div>
+              </div>
+              <div class="scene__caption" data-in><b>Look. Blink.</b> You're in.</div>
+            </div>
+            <!-- 02 notch -->
+            <div class="scene scene--notch">
+              <div class="pill-state" data-in>
+                <svg class="pill-state__ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><circle class="spin" cx="50" cy="50" r="46"/></svg>
+                <svg class="pill-state__glyph" viewBox="-8 -8 116 116"><use href="#glyph-frame"/><path d="M33 33V42M67 33V42"/></svg>
+                <span>Face ID</span>
+              </div>
+              <div class="pill-state" data-in>
+                <svg class="pill-state__glyph pill-state__glyph--solo" viewBox="-8 -8 116 116"><use href="#glyph-frame"/><path class="blink" d="M33 33V42M67 33V42"/></svg>
+                <span>Blink to confirm</span>
+              </div>
+              <div class="pill-state" data-in>
+                <svg class="pill-state__check" viewBox="0 0 100 100"><path d="M18 52L42 76L84 28"/></svg>
+                <span>Unlocked</span>
+              </div>
+            </div>
+            <!-- 03 vault -->
+            <div class="scene scene--vault">
+              <div class="window" data-in>
+                <div class="window__bar"><i></i><i></i><i></i><span>FaceMacOS Vault</span></div>
+                <div class="window__body">
+                  <div class="vault-status"><svg viewBox="0 0 24 24"><path class="shackle" d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="4" y="11" width="16" height="10" rx="2"/></svg><span>Unlocked with Face ID</span></div>
+                  <div class="vault-text">
+                    <p>Wi-Fi at home — <b>correct-horse-battery</b></p>
+                    <p>Passport no. <b>X4 88 21 07</b></p>
+                    <p>Bank PIN hint — <b>grandma's birthday</b></p>
+                    <p>Recovery codes — <b>7F2K · 9QXA · 3MLP</b></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 04 gestures -->
+            <div class="scene scene--gestures">
+              <div class="gesture" data-in><span class="gesture__key">◉ ◉</span><span>Blink twice</span><em>Open Safari</em></div>
+              <div class="gesture" data-in><span class="gesture__key">←</span><span>Look left</span><em>Run “Focus”</em></div>
+              <div class="gesture" data-in><span class="gesture__key">→</span><span>Look right</span><em>Lock screen</em></div>
+              <div class="gesture" data-in><span class="gesture__key">↑</span><span>Look up</span><em>Open Vault</em></div>
+            </div>
+            <!-- 05 always on -->
+            <div class="scene scene--menu">
+              <div class="menubar" data-in>
+                <span class="menubar__icon"><svg viewBox="-8 -8 116 116"><use href="#glyph-frame"/><path d="M33 33V42M67 33V42"/></svg></span>
+                <span>Wi-Fi</span><span>100%</span><span>Sun 9:41</span>
+              </div>
+              <div class="menu" data-in>
+                <div class="menu__item">Open FaceMacOS…</div>
+                <hr>
+                <div class="menu__item">Open Vault <kbd>⌥⌘F</kbd></div>
+                <div class="menu__item">Gesture Command <kbd>⌥⌘G</kbd></div>
+                <div class="menu__item">Test Face ID</div>
+                <hr>
+                <div class="menu__item menu__item--status"><i></i>Mac Unlock: Ready</div>
+                <div class="menu__item menu__item--status"><i></i>Opens at login</div>
+              </div>
+            </div>
+            <!-- 06 privacy -->
+            <div class="scene scene--privacy">
+              <svg class="shield" viewBox="0 0 120 140" data-in>
+                <path d="M60 6l48 18v36c0 34-21 58-48 72C33 118 12 94 12 60V24L60 6Z"/>
+                <g transform="translate(34 40) scale(0.52)"><use href="#glyph-frame"/><path d="M33 33V42M67 33V42"/></g>
+              </svg>
+              <div class="chips" data-in><span>No cloud</span><span>No account</span><span>No photos saved</span><span>Keychain only</span></div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -281,11 +363,18 @@
         <span class="cta__line">Open the lid.</span>
         <span class="cta__line"><em>That's it.</em></span>
       </h2>
-      <a class="cta__button magnetic" href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS/releases/latest">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
-        <span>Download for Mac</span>
-      </a>
-      <p class="cta__meta">Free · macOS 13 Ventura or later · Apple silicon &amp; Intel</p>
+      <div class="cta__actions">
+        <a class="cta__button magnetic" href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS/releases/latest/download/FaceMacOS.dmg" download>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          <span>Download for Mac</span>
+        </a>
+        <a class="cta__secondary magnetic" href="https://github.com/Wissem-Sahli-Engineer/FaceMacOS">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><use href="#github"/></svg>
+          <span>View on GitHub</span>
+        </a>
+      </div>
+      <p class="cta__meta">Free &amp; open source · macOS 13 Ventura or later · Apple silicon &amp; Intel</p>
+      <p class="cta__note">First launch: if macOS says it can't check the app, open System Settings → Privacy &amp; Security → <b>Open Anyway</b>.</p>
     </section>
   </main>
 

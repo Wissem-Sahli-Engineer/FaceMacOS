@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Builds a universal release and packages build/FaceMacOS-<version>.dmg for GitHub Releases.
+# Builds a universal release and packages build/FaceMacOS.dmg for GitHub Releases.
+# Keep the asset name "FaceMacOS.dmg": the website downloads .../releases/latest/download/FaceMacOS.dmg.
 # Optional: SIGN_IDENTITY="Developer ID Application: ..." and NOTARY_PROFILE=<notarytool keychain profile>
 # to sign + notarize so users can open it without Gatekeeper warnings.
 set -euo pipefail
@@ -13,7 +14,7 @@ fi
 scripts/build.sh release
 
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' Resources/Info.plist)"
-DMG="build/FaceMacOS-$VERSION.dmg"
+DMG="build/FaceMacOS.dmg"
 
 # dmgbuild lays out the drag-to-Applications window (background, icon positions) without scripting Finder.
 if [[ ! -x .venv/bin/dmgbuild ]]; then
@@ -45,4 +46,4 @@ if [[ -n "${NOTARY_PROFILE:-}" ]]; then
   xcrun stapler staple "$DMG"
 fi
 
-echo "Created $DMG ($(du -h "$DMG" | cut -f1))"
+echo "Created $DMG ($(du -h "$DMG" | cut -f1)) for version $VERSION"
