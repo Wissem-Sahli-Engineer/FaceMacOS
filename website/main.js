@@ -151,7 +151,7 @@
         scrollTrigger: { trigger: ".hero", start: "top top", end: "+=280%", scrub: true, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
       })
       .fromTo([".hero__title", ".hero__eyebrow"], { yPercent: 0, autoAlpha: 1 }, { yPercent: -40, autoAlpha: 0, duration: 1.8, immediateRender: false }, 0)
-      .to(".hero__scroll", { autoAlpha: 0, duration: 0.6 }, 0)
+      .fromTo(".hero__scroll", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.6, immediateRender: false }, 0)
       .to(mac, { y: () => innerHeight / 2 - screenCenter(), scale: zoom, duration: 2.6, ease: "power2.inOut" }, 0)
       .to(".mac__off", { autoAlpha: 0, duration: 0.9 }, 1.4)
       .to(".notch", { width: "34%", height: "44%", borderRadius: "0 0 26px 26px", duration: 1.1, ease: "power3.inOut" }, 3.2)
@@ -503,6 +503,8 @@
     colorPicker();
     counters();
     pointerEffects();
+    // Triggers were created per feature, not in page order; sort so ones below a pinned section include its spacing.
+    ScrollTrigger.sort();
     ScrollTrigger.refresh();
     playPreloader().add(() => intro.play(), "-=0.5");
   });
