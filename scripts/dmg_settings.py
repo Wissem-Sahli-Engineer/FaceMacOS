@@ -10,7 +10,7 @@ format = "UDZO"
 filesystem = "HFS+"
 size = None
 
-files = [app, ("Resources/DMG/Terminal fix.txt", "Terminal fix.txt")]
+files = [app, ("Resources/DMG/Terminal command.txt", "Terminal command.txt")]
 symlinks = {"Applications": "/Applications"}
 icon = "Resources/AppIcon.icns"
 
@@ -31,5 +31,5 @@ arrange_by = None
 icon_locations = {
     app_name: (170, 160),
     "Applications": (490, 160),
-    "Terminal fix.txt": (530, 330),
+    "Terminal command.txt": (580, 330),
 }

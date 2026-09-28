@@ -1,7 +1,7 @@
 // Renders the DMG window background: swift scripts/make_dmg_background.swift out.png <scale>
 // Layout must match scripts/dmg_settings.py (660x560 window with a 540pt-tall background,
-// icons centered at y=160, x=170 and x=490, "Terminal fix.txt" at 530,330). With Finder's toolbar, path and status bars
-// all on, only about the top 430pt are visible, so everything sits above that.
+// icons centered at y=160, x=170 and x=490, "Terminal command.txt" at 580,330). With Finder's toolbar, path and
+// status bars all on, only about the top 430pt are visible, so everything sits above that.
 import AppKit
 
 let width: CGFloat = 660
@@ -89,19 +89,28 @@ ctx.setLineWidth(1)
 ctx.move(to: CGPoint(x: 60, y: top(268)))
 ctx.addLine(to: CGPoint(x: width - 60, y: top(268)))
 ctx.strokePath()
-// Left column of text; the "Terminal fix.txt" icon sits on the right at (530, 330).
-func drawLeft(_ text: String, y: CGFloat, weight: NSFont.Weight = .regular, white: CGFloat = 0.40) {
+// Left column; "Terminal command.txt" sits on the right at (580, 330).
+func drawLeft(_ text: String, y: CGFloat, size: CGFloat = 12.5, weight: NSFont.Weight = .regular, white: CGFloat = 0.40) {
     let attributed = NSAttributedString(string: text, attributes: [
-        .font: NSFont.systemFont(ofSize: 12.5, weight: weight), .foregroundColor: NSColor(white: white, alpha: 1),
+        .font: NSFont.systemFont(ofSize: size, weight: weight), .foregroundColor: NSColor(white: white, alpha: 1),
     ])
-    attributed.draw(at: CGPoint(x: 60, y: top(y) - attributed.size().height / 2))
+    attributed.draw(at: CGPoint(x: 44, y: top(y) - attributed.size().height / 2))
 }
-drawLeft("macOS blocked it the first time you opened it?", y: 296, weight: .semibold, white: 0.20)
-drawLeft("1.  System Settings → Privacy & Security →", y: 322)
-drawLeft("     scroll down → Open Anyway", y: 340)
-drawLeft("2.  Or open “Terminal fix”, copy the command,", y: 366)
-drawLeft("     paste it into Terminal and press Return  →", y: 384)
-drawLeft("Help: facemacos.onrender.com/#install", y: 410, white: 0.55)
+drawLeft("Your Mac will probably not let you open it the first time.", y: 294, size: 13.5, weight: .semibold, white: 0.15)
+drawLeft("After dragging it to Applications, open Terminal and paste:", y: 316)
+
+let command = NSAttributedString(string: "xattr -dr com.apple.quarantine /Applications/FaceMacOS.app", attributes: [
+    .font: NSFont.monospacedSystemFont(ofSize: 11.5, weight: .medium), .foregroundColor: NSColor(white: 0.95, alpha: 1),
+])
+let commandSize = command.size()
+let box = CGRect(x: 44, y: top(350) - 16, width: commandSize.width + 28, height: 32)
+ctx.addPath(CGPath(roundedRect: box, cornerWidth: 8, cornerHeight: 8, transform: nil))
+ctx.setFillColor(CGColor(red: 0.11, green: 0.11, blue: 0.12, alpha: 1))
+ctx.fillPath()
+command.draw(at: CGPoint(x: box.minX + 14, y: box.midY - commandSize.height / 2))
+
+drawLeft("Copy it from “Terminal command” on the right  →", y: 384, size: 12)
+drawLeft("Then open FaceMacOS again. You only need to do this once.", y: 404, size: 12, white: 0.50)
 
 context.flushGraphics()
 try! rep.representation(using: .png, properties: [:])!.write(to: output)

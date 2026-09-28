@@ -9,7 +9,7 @@
       <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
       <description><![CDATA[Automatic updates: FaceMacOS now updates itself from the menu bar (Check for Updates…). Red is the new default accent color.]]></description>
-      <enclosure url="https://facemacos.onrender.com/downloads/FaceMacOS.dmg?v=2" type="application/octet-stream" sparkle:edSignature="mqCRym9vdYHqxJTzZpjsjMhsXxzPhvWPjBrMVfJJxZuYAiSncbYQYSuWYa/CH4WMI/NbCVBvZ+1/GMSDbSc9CA==" length="24204660" />
+      <enclosure url="https://facemacos.onrender.com/downloads/FaceMacOS.dmg?v=2" type="application/octet-stream" sparkle:edSignature="4U7T0Gwd2jmrB2SEsd4SmeLq9jsO6Dh7C1LvmG9McmjD9XkLmETfTkdEDByI9SE4rkplyhrpAKVXMr5/LITzAQ==" length="24201141" />
     </item>
   </channel>
 </rss>
