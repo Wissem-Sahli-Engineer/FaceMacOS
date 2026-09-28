@@ -1,5 +1,18 @@
 (() => {
   const root = document.documentElement;
+
+  document.querySelectorAll(".install__copy").forEach((button) => {
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(button.previousElementSibling.textContent);
+        button.textContent = "Copied";
+      } catch {
+        button.textContent = "Select & copy";
+      }
+      setTimeout(() => (button.textContent = "Copy"), 1800);
+    });
+  });
+
   // Any missing CDN script would crash the setup and leave the preloader up, so fall back to the plain page.
   if (!window.gsap || !window.ScrollTrigger || !window.SplitText) {
     root.classList.remove("js");

@@ -23,6 +23,7 @@ Face ID–style face recognition for any Mac with a camera. Close the lid, open 
 
 If macOS says the app "can't be opened because Apple cannot check it for malicious software" (builds without Apple notarization):
 open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to FaceMacOS. You only need to do this once.
+Or run once in Terminal: `xattr -dr com.apple.quarantine /Applications/FaceMacOS.app`
 
 FaceMacOS lives in the menu bar (the Face ID icon). It opens at login automatically and restarts itself if it ever stops unexpectedly.
 

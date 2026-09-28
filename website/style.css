@@ -819,8 +819,49 @@ button { font: inherit; color: inherit; }
   font-weight: 600;
 }
 .cta__secondary svg { width: 20px; fill: currentColor; }
-.cta__note { max-width: 520px; margin-top: -24px; font-size: 13px; color: var(--muted); }
-.cta__note b { color: var(--text); font-weight: 600; }
+.install {
+  width: min(620px, 100%);
+  padding: 24px 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-2);
+  text-align: left;
+}
+.install__title { margin-bottom: 8px; font-size: 20px; }
+.install__lead, .install__alt { font-size: 14px; color: var(--muted); }
+.install__lead em { font-family: var(--sans); font-size: inherit; font-style: normal; color: var(--text); }
+.install b { color: var(--text); font-weight: 600; }
+.install__steps { margin: 16px 0; padding-left: 22px; font-size: 15px; line-height: 1.55; }
+.install__steps li { margin-bottom: 6px; padding-left: 4px; }
+.install__steps li::marker { color: var(--accent); font-weight: 700; }
+.install__cmd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 10px 10px 10px 14px;
+  border-radius: 10px;
+  background: #000;
+  border: 1px solid var(--line);
+}
+.install__cmd code {
+  flex: 1;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+}
+.install__copy {
+  flex: none;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
 .cta__button svg { width: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .cta__meta { color: var(--muted); font-size: 15px; }
 

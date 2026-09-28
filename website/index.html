@@ -29,7 +29,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css"
     />
-    <link rel="stylesheet" href="style.css?v=9" />
+    <link rel="stylesheet" href="style.css?v=10" />
     <script>
       document.documentElement.classList.add("js");
       // If the animation scripts can't load, show the plain page instead of the preloader.
@@ -662,10 +662,24 @@
           Free &amp; open source · macOS 13 Ventura or later · Apple silicon
           &amp; Intel
         </p>
-        <p class="cta__note">
-          First launch: if macOS says it can't check the app, open System
-          Settings → Privacy &amp; Security → <b>Open Anyway</b>.
-        </p>
+        <div class="install" id="install">
+          <h3 class="install__title">Opening it the first time</h3>
+          <p class="install__lead">
+            FaceMacOS isn't notarized by Apple yet, so macOS shows
+            <em>“Apple could not verify FaceMacOS is free of malware”</em>. That's
+            expected for apps from independent developers. Allow it once:
+          </p>
+          <ol class="install__steps">
+            <li>Drag <b>FaceMacOS</b> into <b>Applications</b>, open it, and click <b>Done</b> on the warning.</li>
+            <li>Open <b>System Settings → Privacy &amp; Security</b> and scroll to the bottom.</li>
+            <li>Next to “FaceMacOS was blocked”, click <b>Open Anyway</b>, then confirm with your password.</li>
+          </ol>
+          <p class="install__alt">Or run this once in Terminal:</p>
+          <div class="install__cmd">
+            <code>xattr -dr com.apple.quarantine /Applications/FaceMacOS.app</code>
+            <button class="install__copy" type="button">Copy</button>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -678,6 +692,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
-    <script src="main.js?v=9"></script>
+    <script src="main.js?v=10"></script>
   </body>
 </html>
