@@ -59,10 +59,14 @@ final class AppController: ObservableObject {
     func openVault() {
         guard !authenticator.isBusy else { return }
         Task {
-            var unlocked = await authenticator.authenticate()
-            if !unlocked { unlocked = await passwordFallback() }
-            if unlocked { vault.show() }
+            if await verifyOwner(reason: "unlock your FaceMacOS vault") { vault.show() }
         }
+    }
+
+    /// Face ID first, then Touch ID or the Mac password.
+    func verifyOwner(reason: String) async -> Bool {
+        if authenticator.isEnrolled, !authenticator.isBusy, await authenticator.authenticate() { return true }
+        return await passwordFallback(reason: reason)
     }
 
     func deleteAllData() {
@@ -80,10 +84,10 @@ final class AppController: ObservableObject {
     }
 
     /// Like Face ID falling back to the passcode: Touch ID or the Mac login password.
-    private func passwordFallback() async -> Bool {
+    private func passwordFallback(reason: String) async -> Bool {
         let context = LAContext()
         do {
-            return try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "unlock your FaceMacOS vault")
+            return try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
         } catch {
             return false
         }
