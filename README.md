@@ -125,7 +125,22 @@ Update `CFBundleShortVersionString` and `CFBundleVersion` in `Resources/Info.pli
 cd website && python3 -m http.server 8765   # then open http://localhost:8765
 ```
 
-To publish it with GitHub Pages: repository **Settings → Pages**, deploy from the `main` branch and the `/website` folder (or copy the folder to any static host).
+**Deploy it on Render (free):**
+
+1. Push this repo to GitHub (already done).
+2. On [render.com](https://render.com), **New → Blueprint**, pick this repo. Render reads `render.yaml` at the repo root and creates a free static site serving `website/`, no build step.
+   - No Render account yet, or you'd rather click through it by hand: **New → Static Site**, pick the repo, set **Root Directory** to `website`, leave **Build Command** empty, set **Publish Directory** to `.`.
+3. Render gives you a free `https://facemacos.onrender.com`-style URL immediately. No domain purchase needed.
+4. Every push to `main` redeploys automatically.
+
+Alternative: GitHub Pages — repository **Settings → Pages**, deploy from the `main` branch and the `/website` folder.
+
+**Getting the DMG to users:** the Download buttons link to `downloads/FaceMacOS.dmg`, a file inside the `website` folder — so it's served automatically by whichever host you pick, no extra setup. When you ship a new version, `scripts/release.sh` overwrites that file; commit it so the live site updates. Users always get the current file at the same URL, so there's no separate "update" step for them beyond downloading the DMG again — FaceMacOS itself has no auto-updater.
+
+Two things worth knowing:
+
+- Each release adds another ~22 MB to `website/downloads/FaceMacOS.dmg`, and since it's committed, the repo's history grows by that much every time (git never shrinks old blobs on its own). Fine for a while; if it becomes a problem, move the DMG to [Git LFS](https://git-lfs.com) or to GitHub Releases (`releases/latest/download/FaceMacOS.dmg`) and point the Download buttons there instead.
+- If you'd like people to see a changelog or pick an older version, publish a GitHub Release too (see below) and link to it from the site.
 
 ### Project layout
 

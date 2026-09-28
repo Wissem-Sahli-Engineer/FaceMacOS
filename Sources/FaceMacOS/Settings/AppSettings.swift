@@ -57,8 +57,8 @@ final class AppSettings: ObservableObject {
         unlockLockScreen = defaults.bool(forKey: Key.unlockLockScreen)
         actions = defaults.data(forKey: Key.actions).flatMap { try? JSONDecoder().decode([FaceAction].self, from: $0) }
             ?? FaceAction.defaults
-        accent = defaults.string(forKey: Key.accent).flatMap(AccentChoice.init(rawValue:)) ?? .green
-        customAccent = defaults.string(forKey: Key.customAccent).flatMap { Color(hex: $0) } ?? AccentChoice.green.color
+        accent = defaults.string(forKey: Key.accent).flatMap(AccentChoice.init(rawValue:)) ?? .red
+        customAccent = defaults.string(forKey: Key.customAccent).flatMap { Color(hex: $0) } ?? AccentChoice.red.color
     }
 
     func applyDockPolicy() {

@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: facemacos
+    runtime: static
+    rootDir: website
+    buildCommand: ""
+    staticPublishPath: .
+    headers:
+      - path: /downloads/FaceMacOS.dmg
+        headers:
+          - key: Content-Disposition
+            value: "attachment; filename=FaceMacOS.dmg"

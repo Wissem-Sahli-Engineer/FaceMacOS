@@ -9,14 +9,14 @@ enum AccentChoice: String, CaseIterable, Identifiable {
 
     var title: String { rawValue.capitalized }
 
-    /// Preset color; `custom` falls back to green (callers use the stored custom color instead).
+    /// Preset color; `custom` falls back to red (callers use the stored custom color instead).
     var color: Color {
         switch self {
-        case .green, .custom: return Color(red: 0.20, green: 0.84, blue: 0.40)
+        case .green: return Color(red: 0.20, green: 0.84, blue: 0.40)
         case .blue: return Color(red: 0.04, green: 0.52, blue: 1.00)
         case .purple: return Color(red: 0.69, green: 0.32, blue: 0.87)
         case .pink: return Color(red: 1.00, green: 0.22, blue: 0.47)
-        case .red: return Color(red: 1.00, green: 0.27, blue: 0.23)
+        case .red, .custom: return Color(red: 1.00, green: 0.27, blue: 0.23)
         case .orange: return Color(red: 1.00, green: 0.62, blue: 0.04)
         case .yellow: return Color(red: 1.00, green: 0.84, blue: 0.04)
         case .teal: return Color(red: 0.19, green: 0.78, blue: 0.82)
