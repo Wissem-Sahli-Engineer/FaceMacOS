@@ -845,7 +845,3 @@ button { font: inherit; color: inherit; }
   .notch__content { opacity: 1; }
   .how__track { flex-wrap: wrap; width: auto; }
 }
-
-.split div div{
-  padding: 50px;
-}
