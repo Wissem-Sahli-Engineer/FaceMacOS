@@ -97,15 +97,33 @@ The face model (`Models/FaceEmbedding.mlpackage`, FaceNet trained on VGGFace2) i
 
 Local builds use a self-signed certificate. Because it has no Apple Team ID, macOS asks for Keychain access again after each rebuild, and launch at login re-registers when you open the rebuilt app.
 
-### Release a DMG
+### Release a new version (users update in-app)
 
-```sh
-scripts/release.sh
-```
+FaceMacOS updates itself with [Sparkle](https://sparkle-project.org): about once a day, while online, it checks `https://facemacos.onrender.com/appcast.xml`, and offers to install newer versions. Users can also choose **Check for Updates…** in the menu bar or in Settings.
 
-Builds a universal (Apple silicon + Intel) app and `build/FaceMacOS.dmg` with the drag-to-Applications window.
+1. In `Resources/Info.plist`, raise `CFBundleShortVersionString` (e.g. `1.2.0`) and **`CFBundleVersion`** (e.g. `3`). Sparkle compares `CFBundleVersion`, so it must go up every release; `release.sh` refuses to run otherwise.
+2. Run, with a short note users will see in the update window:
+   ```sh
+   NOTES="Faster unlock and a new gesture." scripts/release.sh
+   ```
+   This builds a universal (Apple silicon + Intel) app and `build/FaceMacOS.dmg`, copies it to `website/downloads/FaceMacOS.dmg` (served by the Download buttons), signs it with your update key, and writes `website/appcast.xml`.
+3. Commit and push `website/downloads/FaceMacOS.dmg` and `website/appcast.xml`. Render redeploys, and installed copies pick up the update.
 
-It also copies the DMG to `website/downloads/FaceMacOS.dmg`, which the website's Download buttons serve directly. Commit that file with the website so the hosted site offers the new version.
+Updates installed through Sparkle don't carry the download quarantine flag, so users only see the "could not verify … malware" warning on their very first install.
+
+#### Back up your two release keys
+
+An update is only installed if it's signed with **both** keys below. If you lose either one, installed copies can never be updated again and every user has to reinstall by hand. Keep backups somewhere safe outside this Mac (a password manager, an encrypted USB drive), and never commit them.
+
+- **Sparkle update key** (created with `generate_keys`, stored in your login Keychain):
+  ```sh
+  .build/artifacts/sparkle/Sparkle/bin/generate_keys -x ~/Desktop/sparkle-private-key.txt   # export; move it somewhere safe
+  .build/artifacts/sparkle/Sparkle/bin/generate_keys -f sparkle-private-key.txt             # import on a new Mac
+  ```
+  Its public half is `SUPublicEDKey` in `Resources/Info.plist`; don't change it.
+- **Code-signing certificate** "FaceMacOS Local Signing" (created by `scripts/setup_signing.sh`): in **Keychain Access → login → My Certificates**, right-click it → **Export…** as a `.p12` with a password. On a new Mac, double-click the `.p12` to import it. Don't run `setup_signing.sh` again on a new Mac; it would create a different certificate.
+
+If you later switch to an Apple Developer ID, ship one release signed with the Developer ID through the normal update so everyone moves over. The Sparkle key stays the same.
 
 Optionally also publish it on GitHub: **Releases → Draft a new release**, tag `v1.0.0`, attach `build/FaceMacOS.dmg` without renaming it. Then `releases/latest/download/FaceMacOS.dmg` always serves the newest release too. The window layout lives in `scripts/dmg_settings.py` and its background in `scripts/make_dmg_background.swift`.
 

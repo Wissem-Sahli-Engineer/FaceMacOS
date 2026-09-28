@@ -65,6 +65,8 @@ struct SettingsView: View {
                 Text("Blinking proves a live person is in front of the camera, not a photo. Lock-screen unlock always requires it.")
             }
 
+            UpdatesSection(updater: controller.updater)
+
             Section("Keyboard Shortcuts") {
                 LabeledContent("Open vault with Face ID", value: "⌥⌘F")
                 LabeledContent("Gesture command", value: "⌥⌘G")
@@ -78,6 +80,36 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Settings")
+    }
+}
+
+private struct UpdatesSection: View {
+    @ObservedObject var updater: Updater
+
+    private var version: String {
+        let info = Bundle.main.infoDictionary
+        return "\(info?["CFBundleShortVersionString"] as? String ?? "?") (\(info?["CFBundleVersion"] as? String ?? "?"))"
+    }
+
+    var body: some View {
+        Section {
+            Toggle("Check for updates automatically", isOn: Binding(
+                get: { updater.automaticallyChecks },
+                set: { updater.automaticallyChecks = $0 }
+            ))
+            LabeledContent("Version \(version)") {
+                Button("Check for Updates…") { updater.checkForUpdates() }
+                    .disabled(!updater.canCheckForUpdates)
+            }
+        } header: {
+            Text("Updates")
+        } footer: {
+            if let lastCheck = updater.lastCheck {
+                Text("Last checked \(lastCheck.formatted(.relative(presentation: .named))). Updates are verified before they're installed.")
+            } else {
+                Text("FaceMacOS checks about once a day when you're online. Updates are verified before they're installed.")
+            }
+        }
     }
 }
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>FaceMacOS</title>
+    <item>
+      <title>Version 1.1.0</title>
+      <pubDate>Mon, 28 Sep 2026 19:53:09 +0000</pubDate>
+      <sparkle:version>2</sparkle:version>
+      <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[Automatic updates: FaceMacOS now updates itself from the menu bar (Check for Updates…). Red is the new default accent color.]]></description>
+      <enclosure url="https://facemacos.onrender.com/downloads/FaceMacOS.dmg?v=2" type="application/octet-stream" sparkle:edSignature="WB89PQXhW5WRQmWpA+/aEvuZ6kJGJAm/Cn33xn578ORweKNNv7vofoA0mn6dxEh4OMEWb/Z4Vy9DLPonos5lDA==" length="23925587" />
+    </item>
+  </channel>
+</rss>

@@ -7,7 +7,8 @@ struct FaceMacOSApp: App {
     var body: some Scene {
         MenuBarExtra("FaceMacOS", systemImage: "faceid") {
             MenuContent(controller: appDelegate.controller, auth: appDelegate.controller.authenticator,
-                        settings: appDelegate.controller.settings, unlocker: appDelegate.controller.unlocker)
+                        settings: appDelegate.controller.settings, unlocker: appDelegate.controller.unlocker,
+                        updater: appDelegate.controller.updater)
         }
     }
 }
@@ -66,6 +67,7 @@ struct MenuContent: View {
     @ObservedObject var auth: FaceAuthenticator
     @ObservedObject var settings: AppSettings
     @ObservedObject var unlocker: LockScreenUnlocker
+    @ObservedObject var updater: Updater
 
     var body: some View {
         Button("Open FaceMacOS…") { controller.showMainWindow() }
@@ -91,6 +93,8 @@ struct MenuContent: View {
 
         Divider()
 
+        Button("Check for Updates…") { updater.checkForUpdates() }
+            .disabled(!updater.canCheckForUpdates)
         Button("Quit FaceMacOS") { NSApp.terminate(nil) }
             .keyboardShortcut("q")
     }

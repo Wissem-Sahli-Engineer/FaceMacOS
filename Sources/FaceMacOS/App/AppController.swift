@@ -8,6 +8,7 @@ final class AppController: ObservableObject {
 
     let settings = AppSettings.shared
     let authenticator = FaceAuthenticator()
+    let updater = Updater()
     private(set) lazy var unlocker = LockScreenUnlocker(authenticator: authenticator, settings: settings)
     private lazy var mainWindow = MainWindowController(controller: self)
     private let vault = VaultWindowController()

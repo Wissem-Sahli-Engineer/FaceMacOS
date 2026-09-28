@@ -1,0 +1,2 @@
+terminal :
+xattr -dr com.apple.quarantine /Applications/FaceMacOS.app
