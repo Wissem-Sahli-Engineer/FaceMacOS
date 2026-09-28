@@ -103,7 +103,7 @@
 
   function fitScreenToPhoto() {
     // Display corners in the MacBook photo (percent of image width/height): TL, TR, BR, BL.
-    const corners = [[13.171, 2.539], [88.146, 4.02], [85.951, 52.786], [13.306, 51.375]];
+    const corners = [[16.667, 16.667], [83.333, 16.667], [83.333, 83.333], [16.667, 83.333]];
     const mac = $(".mac");
     const screen = $(".mac__screen");
     const apply = () => {
@@ -128,9 +128,10 @@
     gsap.set(welcomeSplit.chars, { yPercent: 110 });
 
     // Zoom so the display fills the view, centred vertically (layout values ignore transforms).
-    const screenCenter = () => mac.offsetTop + mac.offsetHeight * 0.28;
-    const zoom = () => Math.min(1.3, (innerHeight * 0.66) / (mac.offsetHeight * 0.49), (innerWidth * 0.96) / (mac.offsetWidth * 0.75));
-    const endScale = () => Math.min(1, (innerHeight * 0.6) / (mac.offsetHeight * 0.55));
+    const screenCenter = () => mac.offsetTop + mac.offsetHeight * 0.5;
+    const zoom = () => Math.min(1.3, (innerHeight * 0.7) / (mac.offsetHeight * 0.667), (innerWidth * 0.96) / (mac.offsetWidth * 0.84));
+    // The laptop itself spans 14%–92% of the image height (transparent margin around it).
+    const endScale = () => Math.min(1, (innerHeight - welcomeBottom() - 16) / (mac.offsetHeight * 0.78));
     const welcomeBottom = () => $(".hero__welcome").offsetTop + $(".hero__welcome").offsetHeight + 24;
 
     // Intro after the preloader.
@@ -150,7 +151,8 @@
         defaults: { ease: "none" },
         scrollTrigger: { trigger: ".hero", start: "top top", end: "+=280%", scrub: true, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
       })
-      .fromTo([".hero__title", ".hero__eyebrow"], { yPercent: 0, autoAlpha: 1 }, { yPercent: -40, autoAlpha: 0, duration: 1.8, immediateRender: false }, 0)
+      // Fade the wrapper, not the eyebrow/title themselves, so the intro animation can't fight the scroll.
+      .to(".hero__copy", { yPercent: -40, autoAlpha: 0, duration: 1.8 }, 0)
       .fromTo(".hero__scroll", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.6, immediateRender: false }, 0)
       .to(mac, { y: () => innerHeight / 2 - screenCenter(), scale: zoom, duration: 2.6, ease: "power2.inOut" }, 0)
       .to(".mac__off", { autoAlpha: 0, duration: 0.9 }, 1.4)
@@ -165,11 +167,11 @@
       .to(".notch__text--blink", { autoAlpha: 0, duration: 0.3 }, 6.3)
       .to(".notch__text--done", { autoAlpha: 1, duration: 0.3 }, 6.4)
       .to(".notch__content", { autoAlpha: 0, duration: 0.4 }, 7.4)
-      .to(".notch", { width: "12%", height: "4.4%", borderRadius: "0 0 10px 10px", duration: 0.9, ease: "power3.inOut" }, 7.6)
+      .to(".notch", { width: "12.1%", height: "3.3%", borderRadius: "0 0 8px 8px", duration: 0.9, ease: "power3.inOut" }, 7.6)
       .to(".lockscreen", { yPercent: -100, duration: 1.2, ease: "power2.inOut" }, 7.7)
       .fromTo(".banner", { xPercent: 120, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.8, ease: "power3.out" }, 8.6)
       .to(mac, {
-        y: () => welcomeBottom() - mac.offsetTop - mac.offsetHeight * 0.28 * (1 - endScale()),
+        y: () => welcomeBottom() - mac.offsetTop - mac.offsetHeight * (0.5 * (1 - endScale()) + 0.14 * endScale()),
         scale: endScale,
         duration: 1.6,
         ease: "power2.inOut",
@@ -248,8 +250,9 @@
       });
       lidSetup();
       steps.forEach((step) => {
+        // Finish once the card is fully on screen, so the last card (which stops near the right edge) completes too.
         const tl = gsap
-          .timeline({ scrollTrigger: { trigger: step, containerAnimation: horizontal, start: "left 85%", end: "left 35%", scrub: true } })
+          .timeline({ scrollTrigger: { trigger: step, containerAnimation: horizontal, start: "left 92%", end: "right 98%", scrub: true } })
           .from(step, { autoAlpha: 0.2, scale: 0.92, duration: 1 }, 0)
           .to(drawable($$(".draw", step)), { strokeDashoffset: 0, duration: 1, stagger: 0.1 }, 0);
         closeLid(tl, step);

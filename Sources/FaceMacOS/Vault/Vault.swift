@@ -3,20 +3,16 @@ import SwiftUI
 
 @MainActor
 final class VaultModel: ObservableObject {
-    private static let account = "vault-note"
     @Published var text = ""
 
     func unlock() {
-        text = Keychain.read(Self.account).flatMap { String(data: $0, encoding: .utf8) } ?? ""
+        text = Secrets.load()?.vaultNote ?? ""
     }
 
     func saveAndLock() {
-        Keychain.write(Data(text.utf8), account: Self.account)
+        let note = text
+        Secrets.update { $0.vaultNote = note.isEmpty ? nil : note }
         text = ""
-    }
-
-    static func deleteStoredNote() {
-        Keychain.delete(account)
     }
 }
 

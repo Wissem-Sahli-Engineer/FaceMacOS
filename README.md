@@ -17,7 +17,7 @@ Face ID–style face recognition for any Mac with a camera. Close the lid, open 
 
 ## Install
 
-1. Download [FaceMacOS.dmg](https://github.com/Wissem-Sahli-Engineer/FaceMacOS/releases/latest/download/FaceMacOS.dmg) (or pick a version on the [Releases](https://github.com/Wissem-Sahli-Engineer/FaceMacOS/releases) page).
+1. Download `FaceMacOS.dmg` from the website, or from [`website/downloads`](website/downloads/FaceMacOS.dmg) in this repository.
 2. Open the DMG and drag **FaceMacOS** onto the **Applications** folder.
 3. Eject the DMG, then open FaceMacOS from Applications.
 
@@ -104,7 +104,9 @@ scripts/release.sh
 
 Builds a universal (Apple silicon + Intel) app and `build/FaceMacOS.dmg` with the drag-to-Applications window.
 
-Publish it: on GitHub go to **Releases → Draft a new release**, create a tag like `v1.0.0`, and attach `build/FaceMacOS.dmg` **without renaming it**. The website's Download buttons point to `releases/latest/download/FaceMacOS.dmg`, which always serves the newest release. The window layout lives in `scripts/dmg_settings.py` and its background in `scripts/make_dmg_background.swift`.
+It also copies the DMG to `website/downloads/FaceMacOS.dmg`, which the website's Download buttons serve directly. Commit that file with the website so the hosted site offers the new version.
+
+Optionally also publish it on GitHub: **Releases → Draft a new release**, tag `v1.0.0`, attach `build/FaceMacOS.dmg` without renaming it. Then `releases/latest/download/FaceMacOS.dmg` always serves the newest release too. The window layout lives in `scripts/dmg_settings.py` and its background in `scripts/make_dmg_background.swift`.
 
 For a DMG that opens without Gatekeeper warnings, sign with a Developer ID and notarize (needs an Apple Developer Program membership):
 

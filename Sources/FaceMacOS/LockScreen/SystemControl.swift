@@ -75,20 +75,18 @@ enum SystemControl {
 }
 
 enum LoginPassword {
-    private static let account = "login-password"
-
-    static var isStored: Bool { Keychain.exists(account) }
+    static var isStored: Bool { Secrets.hasLoginPassword }
 
     static func load(allowPrompt: Bool = true) -> String? {
-        Keychain.read(account, allowPrompt: allowPrompt).flatMap { String(data: $0, encoding: .utf8) }
+        Secrets.load(allowPrompt: allowPrompt)?.loginPassword
     }
 
     static func save(_ password: String) -> OSStatus {
-        Keychain.write(Data(password.utf8), account: account)
+        Secrets.update { $0.loginPassword = password }
     }
 
     static func delete() {
-        Keychain.delete(account)
+        Secrets.update { $0.loginPassword = nil }
     }
 
     /// Checks the password against the current user's account via Open Directory.

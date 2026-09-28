@@ -17,8 +17,6 @@ final class AppController: ObservableObject {
     func start() {
         settings.applyDockPolicy()
         settings.configureLaunchAtLogin()
-        // Ask for Keychain access now, while the user can answer, not later behind the lock screen.
-        if settings.unlockLockScreen, LoginPassword.isStored { _ = LoginPassword.load() }
         notch = NotchController(authenticator: authenticator)
         _ = unlocker
         hotKeys = [
@@ -76,8 +74,7 @@ final class AppController: ObservableObject {
         alert.buttons.first?.hasDestructiveAction = true
         guard alert.runModal() == .alertFirstButtonReturn else { return }
         authenticator.deleteEnrollment()
-        VaultModel.deleteStoredNote()
-        LoginPassword.delete()
+        Secrets.deleteAll()
         unlocker.refresh()
     }
 

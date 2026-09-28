@@ -29,19 +29,17 @@ struct FaceTemplate: Codable {
 }
 
 struct FaceStore {
-    private let account = "face-template"
-
     func load() -> FaceTemplate? {
-        guard let data = Keychain.read(account) else { return nil }
+        guard let data = Secrets.load()?.faceTemplate else { return nil }
         return try? JSONDecoder().decode(FaceTemplate.self, from: data)
     }
 
     func save(_ template: FaceTemplate) {
         guard let data = try? JSONEncoder().encode(template) else { return }
-        Keychain.write(data, account: account)
+        Secrets.update { $0.faceTemplate = data }
     }
 
     func delete() {
-        Keychain.delete(account)
+        Secrets.update { $0.faceTemplate = nil }
     }
 }

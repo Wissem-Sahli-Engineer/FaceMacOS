@@ -55,5 +55,32 @@ ctx.addLine(to: CGPoint(x: 388, y: arrowY))
 ctx.addLine(to: CGPoint(x: 370, y: arrowY - 16))
 ctx.strokePath()
 
+// "Built for macOS" badge under the arrow (a plain laptop glyph; Apple's logo is not licensed for third-party use).
+let badgeFont = NSFont.systemFont(ofSize: 12, weight: .semibold)
+let badgeText = NSAttributedString(string: "Built for macOS", attributes: [.font: badgeFont, .foregroundColor: NSColor(white: 0.30, alpha: 1)])
+let textSize = badgeText.size()
+let glyphWidth: CGFloat = 18
+let badgeWidth = 14 + glyphWidth + 7 + textSize.width + 14
+let badgeRect = CGRect(x: (width - badgeWidth) / 2, y: top(212) - 13, width: badgeWidth, height: 26)
+ctx.addPath(CGPath(roundedRect: badgeRect, cornerWidth: 13, cornerHeight: 13, transform: nil))
+ctx.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 0.9))
+ctx.fillPath()
+ctx.addPath(CGPath(roundedRect: badgeRect.insetBy(dx: 0.5, dy: 0.5), cornerWidth: 12.5, cornerHeight: 12.5, transform: nil))
+ctx.setStrokeColor(CGColor(red: 0, green: 0, blue: 0, alpha: 0.12))
+ctx.setLineWidth(1)
+ctx.strokePath()
+let glyphX = badgeRect.minX + 14
+let glyphY = badgeRect.midY
+ctx.setStrokeColor(CGColor(gray: 0.30, alpha: 1))
+ctx.setLineWidth(1.4)
+ctx.setLineCap(.round)
+ctx.setLineJoin(.round)
+ctx.addPath(CGPath(roundedRect: CGRect(x: glyphX + 2, y: glyphY - 3, width: glyphWidth - 4, height: 10), cornerWidth: 1.5, cornerHeight: 1.5, transform: nil))
+ctx.strokePath()
+ctx.move(to: CGPoint(x: glyphX, y: glyphY - 5))
+ctx.addLine(to: CGPoint(x: glyphX + glyphWidth, y: glyphY - 5))
+ctx.strokePath()
+badgeText.draw(at: CGPoint(x: glyphX + glyphWidth + 7, y: badgeRect.midY - textSize.height / 2))
+
 context.flushGraphics()
 try! rep.representation(using: .png, properties: [:])!.write(to: output)

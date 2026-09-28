@@ -46,4 +46,7 @@ if [[ -n "${NOTARY_PROFILE:-}" ]]; then
   xcrun stapler staple "$DMG"
 fi
 
-echo "Created $DMG ($(du -h "$DMG" | cut -f1)) for version $VERSION"
+# The website serves this copy directly (Download buttons link to downloads/FaceMacOS.dmg).
+mkdir -p website/downloads
+cp "$DMG" website/downloads/FaceMacOS.dmg
+echo "Created $DMG ($(du -h "$DMG" | cut -f1)) for version $VERSION, copied to website/downloads/"

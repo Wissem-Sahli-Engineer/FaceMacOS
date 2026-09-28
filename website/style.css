@@ -4,7 +4,7 @@
   --line: rgba(255, 255, 255, 0.09);
   --text: #f2f3f5;
   --muted: #8b9098;
-  --accent: #2997ff;
+  --accent: #ff375f;
   --radius: 22px;
   --gutter: clamp(16px, 4vw, 48px);
   --sans: "Inter Tight", system-ui, -apple-system, sans-serif;
@@ -171,6 +171,7 @@ button { font: inherit; color: inherit; }
   opacity: 0.55;
   pointer-events: none;
 }
+.hero__copy { position: relative; }
 .hero__eyebrow { position: relative; margin-bottom: 18px; }
 .hero__title {
   position: relative;
@@ -212,23 +213,26 @@ button { font: inherit; color: inherit; }
 .mac {
   position: relative;
   width: min(900px, 88vw);
-  margin-top: clamp(20px, 4vh, 44px);
-  transform-origin: 50% 28%;
+  margin-top: clamp(0px, 2vh, 24px);
+  transform-origin: 50% 50%;
   will-change: transform;
 }
 .mac__photo {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: auto;
   user-select: none;
   -webkit-user-drag: none;
 }
-/* Approximate display rectangle (fallback); main.js maps it exactly onto the photo's screen corners. */
+/* The mockup's display opening (1280×832 at 320,208 in the 1920×1248 image). */
 .mac__screen {
   position: absolute;
-  left: 13.2%;
-  top: 3.3%;
-  width: 73.6%;
-  height: 48.9%;
+  z-index: 1;
+  left: 16.667%;
+  top: 16.667%;
+  width: 66.667%;
+  height: 66.667%;
   overflow: hidden;
   transform-origin: 0 0;
   container-type: size;
@@ -333,10 +337,10 @@ button { font: inherit; color: inherit; }
   top: 0;
   left: 50%;
   z-index: 4;
-  width: 12%;
-  height: 4.4%;
+  width: 12.1%;
+  height: 3.3%;
   transform: translateX(-50%);
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 8px 8px;
   background: #000;
   overflow: hidden;
 }
@@ -840,4 +844,8 @@ button { font: inherit; color: inherit; }
   .notch { width: 34%; height: 44%; border-radius: 0 0 26px 26px; }
   .notch__content { opacity: 1; }
   .how__track { flex-wrap: wrap; width: auto; }
+}
+
+.split div div{
+  padding: 50px;
 }
