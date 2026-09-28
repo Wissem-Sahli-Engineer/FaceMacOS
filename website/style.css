@@ -403,12 +403,14 @@ button { font: inherit; color: inherit; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: clamp(32px, 6vh, 64px);
+  gap: clamp(20px, 4vh, 64px);
   min-height: 100vh;
   min-height: 100svh;
-  padding: 100px 0 60px;
+  padding: clamp(76px, 11vh, 100px) 0 clamp(20px, 4vh, 60px);
   overflow: hidden;
 }
+/* Everything, card text included, must fit in the window while the section is pinned. */
+.how__head h2 { font-size: clamp(40px, min(6.4vw, 9vh), 96px); }
 .how__head { padding: 0 var(--gutter); }
 .how__track {
   will-change: transform;
@@ -427,7 +429,7 @@ button { font: inherit; color: inherit; }
 .step__num { font-family: var(--serif); font-style: italic; font-size: 28px; color: var(--accent); }
 .step__art {
   width: 100%;
-  height: auto;
+  height: clamp(110px, 26vh, 250px);
   margin: 10px 0 22px;
   fill: none;
   stroke: rgba(255, 255, 255, 0.75);

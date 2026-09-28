@@ -1,10 +1,11 @@
 (() => {
-  window.__ready = true;
   const root = document.documentElement;
-  if (!window.gsap || !window.ScrollTrigger) {
+  // Any missing CDN script would crash the setup and leave the preloader up, so fall back to the plain page.
+  if (!window.gsap || !window.ScrollTrigger || !window.SplitText) {
     root.classList.remove("js");
     return;
   }
+  window.__ready = true;
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -229,14 +230,45 @@
     };
 
     gsap.to(".step__art .pulse", { opacity: 0.25, duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: -1 });
-    gsap.to(".step__art--eye", {
-      scaleY: 0.08, transformOrigin: "50% 50%", duration: 0.1, yoyo: true, repeat: -1, repeatDelay: 2.4, ease: "power1.in",
-    });
+    // A quick blink every few seconds (yoyo + repeatDelay would hold the eye shut as long as open).
+    gsap.timeline({ repeat: -1, repeatDelay: 2.4 })
+      .to(".step__art--eye", { scaleY: 0.08, transformOrigin: "50% 50%", duration: 0.1, ease: "power1.in" })
+      .to(".step__art--eye", { scaleY: 1, duration: 0.12, ease: "power1.out" });
+
+    const reveal = (step) => {
+      const tl = gsap
+        .timeline()
+        .from(step, { autoAlpha: 0.2, scale: 0.92, duration: 1 }, 0)
+        .to(drawable($$(".draw", step)), { strokeDashoffset: 0, duration: 1, stagger: 0.1 }, 0);
+      closeLid(tl, step);
+      return tl;
+    };
 
     const mm = gsap.matchMedia();
     mm.add("(min-width: 761px)", () => {
-      const distance = () => track.scrollWidth - window.innerWidth;
-      const horizontal = gsap.to(track, {
+      const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      lidSetup();
+      // Cards already on screen before the sideways scroll animate in, staggered, as the section scrolls up
+      // (finishing as it pins); cards off to the right animate as they slide in.
+      const onScreen = steps.filter((step) => step.offsetLeft + step.offsetWidth <= window.innerWidth);
+      const entrance = gsap.timeline({ scrollTrigger: { trigger: ".how", start: "top 60%", end: "top top", scrub: true } });
+      onScreen.forEach((step, i) => entrance.add(reveal(step), i * 0.3));
+
+      // Driven by the sideways scroll's own progress: a separate trigger starting mid-pin would be pushed
+      // down by the pin's length. A card starts once its left edge enters and ends once it's fully in view.
+      const incoming = steps
+        .filter((step) => !onScreen.includes(step))
+        .map((step) => ({ step, animation: reveal(step).pause(0) }));
+      const syncIncoming = (self) => {
+        const moved = self.progress * distance();
+        incoming.forEach(({ step, animation }) => {
+          const enters = Math.max(0, step.offsetLeft - window.innerWidth);
+          const inView = Math.min(distance(), step.offsetLeft + step.offsetWidth - window.innerWidth * 0.98);
+          animation.progress(gsap.utils.clamp(0, 1, (moved - enters) / Math.max(1, inView - enters)));
+        });
+      };
+
+      gsap.to(track, {
         x: () => -distance(),
         ease: "none",
         scrollTrigger: {
@@ -246,16 +278,9 @@
           pin: true,
           scrub: true,
           invalidateOnRefresh: true,
+          onUpdate: syncIncoming,
+          onRefresh: syncIncoming,
         },
-      });
-      lidSetup();
-      steps.forEach((step) => {
-        // Finish once the card is fully on screen, so the last card (which stops near the right edge) completes too.
-        const tl = gsap
-          .timeline({ scrollTrigger: { trigger: step, containerAnimation: horizontal, start: "left 92%", end: "right 98%", scrub: true } })
-          .from(step, { autoAlpha: 0.2, scale: 0.92, duration: 1 }, 0)
-          .to(drawable($$(".draw", step)), { strokeDashoffset: 0, duration: 1, stagger: 0.1 }, 0);
-        closeLid(tl, step);
       });
     });
     mm.add("(max-width: 760px)", () => {
