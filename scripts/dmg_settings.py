@@ -10,13 +10,13 @@ format = "UDZO"
 filesystem = "HFS+"
 size = None
 
-files = [app]
+files = [app, ("Resources/DMG/Terminal fix.txt", "Terminal fix.txt")]
 symlinks = {"Applications": "/Applications"}
 icon = "Resources/AppIcon.icns"
 
 background = "Resources/dmg-background.tiff"
 # Outer window size; taller than the content so Finder's optional path/status bars never cover the icons.
-window_rect = ((200, 160), (660, 390))
+window_rect = ((200, 100), (660, 560))
 default_view = "icon-view"
 show_status_bar = False
 show_tab_view = False
@@ -31,4 +31,5 @@ arrange_by = None
 icon_locations = {
     app_name: (170, 160),
     "Applications": (490, 160),
+    "Terminal fix.txt": (530, 330),
 }

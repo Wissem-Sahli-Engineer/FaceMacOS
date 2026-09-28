@@ -29,7 +29,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css"
     />
-    <link rel="stylesheet" href="style.css?v=10" />
+    <link rel="stylesheet" href="style.css?v=11" />
     <script>
       document.documentElement.classList.add("js");
       // If the animation scripts can't load, show the plain page instead of the preloader.
@@ -671,9 +671,16 @@
           </p>
           <ol class="install__steps">
             <li>Drag <b>FaceMacOS</b> into <b>Applications</b>, open it, and click <b>Done</b> on the warning.</li>
-            <li>Open <b>System Settings → Privacy &amp; Security</b> and scroll to the bottom.</li>
+            <li>
+              Click the button below. It opens <b>System Settings → Privacy &amp; Security</b> at the right place
+              (if your browser asks, click <b>Allow</b>).
+            </li>
             <li>Next to “FaceMacOS was blocked”, click <b>Open Anyway</b>, then confirm with your password.</li>
           </ol>
+          <a class="install__open" href="x-apple.systempreferences:com.apple.preference.security?General">
+            Open Privacy &amp; Security
+          </a>
+          <p class="install__hint">Don't see “Open Anyway”? Open FaceMacOS once more first; the button only appears for about an hour after macOS blocks it.</p>
           <p class="install__alt">Or run this once in Terminal:</p>
           <div class="install__cmd">
             <code>xattr -dr com.apple.quarantine /Applications/FaceMacOS.app</code>
@@ -692,6 +699,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
-    <script src="main.js?v=10"></script>
+    <script src="main.js?v=11"></script>
   </body>
 </html>

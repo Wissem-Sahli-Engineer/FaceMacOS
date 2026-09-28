@@ -834,6 +834,17 @@ button { font: inherit; color: inherit; }
 .install__steps { margin: 16px 0; padding-left: 22px; font-size: 15px; line-height: 1.55; }
 .install__steps li { margin-bottom: 6px; padding-left: 4px; }
 .install__steps li::marker { color: var(--accent); font-weight: 700; }
+.install__open {
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+}
+.install__hint { margin: 10px 0 18px; font-size: 13px; color: var(--muted); }
 .install__cmd {
   display: flex;
   align-items: center;

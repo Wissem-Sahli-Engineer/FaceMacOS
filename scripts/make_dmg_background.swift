@@ -1,10 +1,11 @@
 // Renders the DMG window background: swift scripts/make_dmg_background.swift out.png <scale>
-// Layout must match scripts/dmg_settings.py (660x390 window with a 370pt-tall background,
-// icons centered at y=160, x=170 and x=490; everything sits in the top 260pt so Finder bars never hide it).
+// Layout must match scripts/dmg_settings.py (660x560 window with a 540pt-tall background,
+// icons centered at y=160, x=170 and x=490, "Terminal fix.txt" at 530,330). With Finder's toolbar, path and status bars
+// all on, only about the top 430pt are visible, so everything sits above that.
 import AppKit
 
 let width: CGFloat = 660
-let height: CGFloat = 370
+let height: CGFloat = 540
 let output = URL(fileURLWithPath: CommandLine.arguments[1])
 let scale = CommandLine.arguments.count > 2 ? CGFloat(Double(CommandLine.arguments[2]) ?? 1) : 1
 
@@ -81,6 +82,26 @@ ctx.move(to: CGPoint(x: glyphX, y: glyphY - 5))
 ctx.addLine(to: CGPoint(x: glyphX + glyphWidth, y: glyphY - 5))
 ctx.strokePath()
 badgeText.draw(at: CGPoint(x: glyphX + glyphWidth + 7, y: badgeRect.midY - textSize.height / 2))
+
+// First-launch help: without Apple notarization, macOS blocks the app the first time it's opened.
+ctx.setStrokeColor(CGColor(red: 0, green: 0, blue: 0, alpha: 0.08))
+ctx.setLineWidth(1)
+ctx.move(to: CGPoint(x: 60, y: top(268)))
+ctx.addLine(to: CGPoint(x: width - 60, y: top(268)))
+ctx.strokePath()
+// Left column of text; the "Terminal fix.txt" icon sits on the right at (530, 330).
+func drawLeft(_ text: String, y: CGFloat, weight: NSFont.Weight = .regular, white: CGFloat = 0.40) {
+    let attributed = NSAttributedString(string: text, attributes: [
+        .font: NSFont.systemFont(ofSize: 12.5, weight: weight), .foregroundColor: NSColor(white: white, alpha: 1),
+    ])
+    attributed.draw(at: CGPoint(x: 60, y: top(y) - attributed.size().height / 2))
+}
+drawLeft("macOS blocked it the first time you opened it?", y: 296, weight: .semibold, white: 0.20)
+drawLeft("1.  System Settings → Privacy & Security →", y: 322)
+drawLeft("     scroll down → Open Anyway", y: 340)
+drawLeft("2.  Or open “Terminal fix”, copy the command,", y: 366)
+drawLeft("     paste it into Terminal and press Return  →", y: 384)
+drawLeft("Help: facemacos.onrender.com/#install", y: 410, white: 0.55)
 
 context.flushGraphics()
 try! rep.representation(using: .png, properties: [:])!.write(to: output)

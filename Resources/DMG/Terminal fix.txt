@@ -1,0 +1,14 @@
+If macOS blocks FaceMacOS the first time you open it
+("Apple could not verify FaceMacOS is free of malware"):
+
+1. Drag FaceMacOS into Applications first.
+2. Open Terminal (Applications → Utilities → Terminal).
+3. Copy this line, paste it into Terminal and press Return:
+
+xattr -dr com.apple.quarantine /Applications/FaceMacOS.app
+
+4. Open FaceMacOS again. You only need to do this once;
+   updates install without this warning.
+
+No Terminal? System Settings → Privacy & Security → scroll down → Open Anyway.
+Step-by-step help: https://facemacos.onrender.com/#install
