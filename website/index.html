@@ -3,21 +3,48 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FaceMacOS — Unlock your Mac with your face</title>
+    <title>FaceMacOS — Face ID for Mac: unlock your MacBook with your face</title>
     <meta
       name="description"
-      content="Face ID for any Mac with a camera. Open the lid, look, blink — you're in. Free and fully on-device."
+      content="Free Face ID for Mac: unlock your MacBook or iMac with your face using its built-in camera. Look and blink to unlock. Works on macOS 13 and later, fully on-device and private."
     />
+    <link rel="canonical" href="https://facemacos.onrender.com/" />
+    <meta name="author" content="Wissem Sahli" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FaceMacOS" />
+    <meta property="og:url" content="https://facemacos.onrender.com/" />
     <meta
       property="og:title"
-      content="FaceMacOS — Unlock your Mac with your face"
+      content="FaceMacOS — Face ID for Mac: unlock your MacBook with your face"
     />
     <meta
       property="og:description"
-      content="Face ID for any Mac with a camera. Open the lid, look, blink — you're in."
+      content="Face ID for any Mac with a camera. Open the lid, look, blink — you're in. Free and fully on-device."
     />
-    <meta property="og:image" content="assets/icon.png" />
+    <!-- Link previews need an absolute URL. -->
+    <meta property="og:image" content="https://facemacos.onrender.com/assets/icon.png" />
+    <meta property="og:image:alt" content="FaceMacOS app icon" />
+    <meta name="twitter:card" content="summary" />
     <meta name="theme-color" content="#000000" />
+    <!-- Tells Google this page is a free macOS app (eligible for richer search results). -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "FaceMacOS",
+        "alternateName": "Face ID for Mac",
+        "description": "Face recognition that unlocks your Mac with your face using its built-in camera. Look and blink to unlock, with Face ID-style animations in the notch. Runs fully on-device.",
+        "url": "https://facemacos.onrender.com/",
+        "downloadUrl": "https://facemacos.onrender.com/downloads/FaceMacOS.dmg",
+        "image": "https://facemacos.onrender.com/assets/icon.png",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "macOS 13 or later",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": { "@type": "Person", "name": "Wissem Sahli", "url": "https://github.com/Wissem-Sahli-Engineer" },
+        "codeRepository": "https://github.com/Wissem-Sahli-Engineer/FaceMacOS"
+      }
+    </script>
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -113,7 +140,7 @@
             <img
               class="mac__photo"
               src="assets/macbook-pro.webp"
-              alt=""
+              alt="MacBook Air unlocking with the FaceMacOS Face ID animation on the lock screen"
               width="1920"
               height="1248"
               fetchpriority="high"
